@@ -1,18 +1,19 @@
 "use client";
 
-import { MessageCircle, Mail, Phone } from "lucide-react";
+import { MessageCircle, Mail, Phone, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useTienda } from "@/app/context/TiendaContext";
 
 export default function Footer() {
   const { config } = useTienda();
 
-  const nombreEmpresa = config?.nombre_fantasia || config?.nombre || "Tienda Online";
+  const nombreEmpresa = config?.nombre_fantasia || config?.nombre || "Dent-Par";
   const whatsapp = config?.whatsapp;
   const telefono = config?.telefono;
   const email = config?.email;
   const instagram = config?.instagram;
   const facebook = config?.facebook;
+  const sucursales = config?.sucursales || [];
 
   return (
     <footer className="w-full border-t bg-gray-900 text-white">
@@ -57,55 +58,79 @@ export default function Footer() {
         {/* Contact */}
         <div className="flex flex-col items-center md:items-start gap-3">
           <h4 className="font-semibold mb-3">Contacto</h4>
-          <ul className="space-y-3 text-sm">
-            {whatsapp && (
-              <li>
-                <a
-                  href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}?text=Hola%2C%20tengo%20una%20consulta.`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-gray-300 hover:text-green-400 transition-colors"
-                >
-                  <MessageCircle size={16} />
-                  <span>WhatsApp</span>
-                </a>
-              </li>
-            )}
-            {telefono && (
-              <li>
-                <a
-                  href={`tel:${telefono}`}
-                  className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
-                >
-                  <Phone size={16} />
-                  <span>{telefono}</span>
-                </a>
-              </li>
-            )}
-            {email && (
-              <li>
-                <a
-                  href={`mailto:${email}`}
-                  className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
-                >
-                  <Mail size={16} />
-                  <span>{email}</span>
-                </a>
-              </li>
-            )}
-            {instagram && (
-              <li>
-                <a
-                  href={`https://instagram.com/${instagram}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  @{instagram}
-                </a>
-              </li>
-            )}
-          </ul>
+
+          {/* Email corporativo */}
+          {email && (
+            <a
+              href={`mailto:${email}`}
+              className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
+            >
+              <Mail size={16} />
+              <span>{email}</span>
+            </a>
+          )}
+
+          {/* WhatsApp general */}
+          {whatsapp && (
+            <a
+              href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}?text=Hola%2C%20tengo%20una%20consulta.`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-gray-300 hover:text-green-400 transition-colors"
+            >
+              <MessageCircle size={16} />
+              <span>WhatsApp</span>
+            </a>
+          )}
+
+          {/* Sucursales */}
+          {sucursales.length > 0 && (
+            <div className="mt-4 space-y-4 w-full">
+              {sucursales.map((suc) => (
+                <div key={suc.id} className="space-y-1.5">
+                  <p className="text-sm font-semibold text-white">{suc.nombre}</p>
+                  {suc.telefono && (
+                    <a
+                      href={`tel:${suc.telefono}`}
+                      className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
+                    >
+                      <Phone size={14} />
+                      <span>{suc.telefono}</span>
+                    </a>
+                  )}
+                  {suc.direccion && (
+                    <p className="flex items-start gap-2 text-sm text-gray-400">
+                      <MapPin size={14} className="mt-0.5 shrink-0" />
+                      <span>{suc.direccion}</span>
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Fallback: teléfono general si no hay sucursales */}
+          {sucursales.length === 0 && telefono && (
+            <a
+              href={`tel:${telefono}`}
+              className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
+            >
+              <Phone size={16} />
+              <span>{telefono}</span>
+            </a>
+          )}
+
+          {/* Redes sociales */}
+          {instagram && (
+            <a
+              href={`https://instagram.com/${instagram}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-gray-300 hover:text-white transition-colors"
+            >
+              @{instagram}
+            </a>
+          )}
         </div>
       </div>
 

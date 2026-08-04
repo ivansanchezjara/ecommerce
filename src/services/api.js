@@ -3,6 +3,8 @@
  * Maneja auth headers, refresh de tokens y errores.
  */
 
+import Cookies from "js-cookie";
+
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/ecommerce";
 
@@ -20,7 +22,7 @@ export async function apiFetch(endpoint, options = {}) {
 
   // Agregar token si existe (solo client-side)
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("ecommerce_access_token");
+    const token = Cookies.get("ecommerce_access_token");
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
     }
@@ -36,7 +38,7 @@ export async function apiFetch(endpoint, options = {}) {
     const refreshed = await attemptTokenRefresh();
     if (refreshed) {
       // Reintentar con el nuevo token
-      const newToken = localStorage.getItem("ecommerce_access_token");
+      const newToken = Cookies.get("ecommerce_access_token");
       headers["Authorization"] = `Bearer ${newToken}`;
       const retryResponse = await fetch(url, { ...options, headers });
       if (!retryResponse.ok) {
@@ -62,7 +64,7 @@ export async function apiFetch(endpoint, options = {}) {
  * Intenta refrescar el access token usando el refresh token.
  */
 async function attemptTokenRefresh() {
-  const refreshToken = localStorage.getItem("ecommerce_refresh_token");
+  const refreshToken = Cookies.get("ecommerce_refresh_token");
   if (!refreshToken) return false;
 
   try {
@@ -74,7 +76,11 @@ async function attemptTokenRefresh() {
 
     if (response.ok) {
       const data = await response.json();
-      localStorage.setItem("ecommerce_access_token", data.access);
+      Cookies.set("ecommerce_access_token", data.access, {
+        secure: true,
+        sameSite: "strict",
+        expires: 1 / 24, // 1 hora
+      });
       return true;
     }
   } catch {
@@ -88,9 +94,9 @@ async function attemptTokenRefresh() {
  */
 export function clearSession() {
   if (typeof window !== "undefined") {
-    localStorage.removeItem("ecommerce_access_token");
-    localStorage.removeItem("ecommerce_refresh_token");
-    localStorage.removeItem("ecommerce_cliente");
+    Cookies.remove("ecommerce_access_token");
+    Cookies.remove("ecommerce_refresh_token");
+    Cookies.remove("ecommerce_cliente");
   }
 }
 

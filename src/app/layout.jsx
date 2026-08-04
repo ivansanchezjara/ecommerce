@@ -5,17 +5,18 @@ import SideCart from "@/components/cart/SideCart";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import { TiendaProvider } from "./context/TiendaContext";
+import { ToastProvider } from "@/components/ui/feedback/ToastContext";
 
 export const metadata = {
   title: {
-    template: "%s | Tienda Online",
-    default: "Tienda Online",
+    template: "%s | Dent-Par",
+    default: "Dent-Par | Artículos Odontológicos",
   },
   description:
-    "Tienda online de insumos y equipamiento profesional.",
+    "Tienda online de insumos y equipamiento odontológico y médico profesional en Paraguay.",
   openGraph: {
-    title: "Tienda Online",
-    description: "Equipamiento y productos profesionales.",
+    title: "Dent-Par | Artículos Odontológicos",
+    description: "Insumos y equipamiento odontológico profesional.",
     type: "website",
     locale: "es_PY",
   },
@@ -28,10 +29,12 @@ export default function RootLayout({ children }) {
         <TiendaProvider>
           <AuthProvider>
             <CartProvider>
-              <SideCart />
-              <MainHeader />
-              <main className="min-h-screen">{children}</main>
-              <Footer />
+              <ToastProvider>
+                <SideCart />
+                <MainHeader />
+                <main className="min-h-screen">{children}</main>
+                <Footer />
+              </ToastProvider>
             </CartProvider>
           </AuthProvider>
         </TiendaProvider>

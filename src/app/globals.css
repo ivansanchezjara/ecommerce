@@ -6,6 +6,7 @@
     opacity: 0;
     transform: translateX(-30px);
   }
+
   100% {
     opacity: 1;
     transform: translateX(0);
@@ -17,6 +18,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -33,6 +35,9 @@
 
 @theme {
   --font-poppins: "Poppins", sans-serif;
+  /* Colores corporativos sugeridos para el sector odontológico */
+  --color-dental-blue: #0284c7;
+  --color-dental-light: #e0f2fe;
 }
 
 @layer base {
@@ -52,6 +57,17 @@
   main {
     @apply w-full min-h-screen flex flex-col;
   }
+
+  /* Aplicando la fuente Poppins a todos los títulos para mejorar la jerarquía visual */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-poppins);
+    @apply font-bold tracking-tight text-gray-900;
+  }
 }
 
 .custom-pagination .swiper-pagination-bullet {
@@ -65,5 +81,6 @@
 
 .custom-pagination .swiper-pagination-bullet-active {
   width: 25px;
-  background: #111827 !important;
+  /* Actualizado para usar el azul corporativo en lugar del gris oscuro/negro */
+  background: var(--color-dental-blue) !important;
 }

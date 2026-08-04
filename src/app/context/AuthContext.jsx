@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { login as loginService, logout as logoutService, isAuthenticated, getClienteLocal, getPerfil } from "@/services/auth";
+import { login as loginService, logout as logoutService, isAuthenticated, getClienteLocal, getPerfil, updateClienteLocal } from "@/services/auth";
 
 const AuthContext = createContext(null);
 
@@ -39,7 +39,7 @@ export function AuthProvider({ children }) {
     try {
       const perfil = await getPerfil();
       setCliente(perfil);
-      localStorage.setItem("ecommerce_cliente", JSON.stringify(perfil));
+      updateClienteLocal(perfil);
     } catch {
       // Si falla, logout
       logout();

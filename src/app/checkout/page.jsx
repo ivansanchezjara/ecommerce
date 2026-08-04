@@ -12,6 +12,7 @@ import {
   MapPin,
 } from "lucide-react";
 import Link from "next/link";
+import { Heading, Text, Button, Badge, Input, EmptyState } from "@/components/ui";
 
 export default function CheckoutPage() {
   const { cart, cartCount } = useCart();
@@ -51,16 +52,15 @@ export default function CheckoutPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Tu pedido está vacío
-        </h2>
-        <Link
-          href="/products"
-          className="bg-gray-900 text-white px-8 py-3 rounded-full font-bold hover:bg-gray-800 transition-all"
-        >
-          Explorar Productos
-        </Link>
+      <div className="min-h-[70vh] flex items-center justify-center p-6">
+        <EmptyState
+          icon="🛒"
+          titulo="Tu pedido está vacío"
+          descripcion="Agrega productos desde nuestro catálogo para armar tu pedido."
+          onAction={() => window.location.href = "/products"}
+          textoBoton="Explorar Productos"
+          inline
+        />
       </div>
     );
   }
@@ -71,65 +71,62 @@ export default function CheckoutPage() {
         {/* Formulario */}
         <div className="lg:col-span-7 space-y-8">
           <div className="flex flex-col items-center text-center">
-            <Link
+            <Button
+              as={Link}
               href="/products"
-              className="text-gray-400 hover:text-red-600 flex items-center gap-2 text-sm mb-6 transition-colors group"
+              variant="ghost"
+              size="sm"
+              icon={ArrowLeft}
+              className="mb-6 text-gray-400 hover:text-red-600"
             >
-              <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
               Continuar viendo productos
-            </Link>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+            </Button>
+            <Heading level={1} className="text-3xl md:text-4xl mb-4">
               Datos de Envío
-            </h1>
-            <p className="text-gray-500 font-light max-w-md mx-auto">
+            </Heading>
+            <Text variant="body" className="max-w-md mx-auto">
               Ingresa tus datos para que un asesor te envíe el presupuesto formal.
-            </p>
+            </Text>
           </div>
 
           <form id="checkout-form" onSubmit={handleWhatsApp} className="space-y-5">
-            <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={20} />
-              <input
-                required
-                type="text"
-                placeholder="Nombre y Apellido *"
-                value={userData.name}
-                className="w-full pl-12 p-4 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-gray-900 outline-none transition-all"
-                onChange={(e) => setUserData({ ...userData, name: e.target.value })}
-              />
-            </div>
+            <Input
+              required
+              type="text"
+              placeholder="Nombre y Apellido *"
+              value={userData.name}
+              icon={User}
+              onChange={(e) => setUserData({ ...userData, name: e.target.value })}
+              className="!py-4 !rounded-2xl"
+            />
 
-            <div className="relative">
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={20} />
-              <input
-                required
-                type="text"
-                placeholder="Ciudad / Localidad *"
-                className="w-full pl-12 p-4 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-gray-900 outline-none transition-all"
-                onChange={(e) => setUserData({ ...userData, city: e.target.value })}
-              />
-            </div>
+            <Input
+              required
+              type="text"
+              placeholder="Ciudad / Localidad *"
+              icon={MapPin}
+              onChange={(e) => setUserData({ ...userData, city: e.target.value })}
+              className="!py-4 !rounded-2xl"
+            />
 
-            <div className="relative">
-              <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={20} />
-              <input
-                type="text"
-                placeholder="Institución (Opcional)"
-                className="w-full pl-12 p-4 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-gray-900 outline-none transition-all"
-                onChange={(e) => setUserData({ ...userData, institut: e.target.value })}
-              />
-            </div>
+            <Input
+              type="text"
+              placeholder="Institución (Opcional)"
+              icon={Building2}
+              onChange={(e) => setUserData({ ...userData, institut: e.target.value })}
+              className="!py-4 !rounded-2xl"
+            />
           </form>
         </div>
 
         {/* Resumen */}
         <div className="lg:col-span-5">
-          <h2 className="text-xl font-bold text-gray-900 mb-8 flex justify-between items-center">
-            Tu Selección
-            <span className="text-xs bg-gray-900 text-white px-3 py-1 rounded-full">
+          <div className="flex justify-between items-center mb-8">
+            <Heading level={3}>Tu Selección</Heading>
+            <Badge variant="default" className="bg-gray-900 text-white">
               {cartCount} Ítems
-            </span>
-          </h2>
+            </Badge>
+          </div>
 
           <div className="space-y-6 max-h-[500px] overflow-y-auto pr-4">
             {cart.map((item) => {
@@ -151,18 +148,16 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex-1 min-w-0 text-left">
                     <Link href={`/products/${item.slug}`} className="group/item">
-                      <h4 className="text-gray-900 font-bold leading-tight mb-1 line-clamp-2 group-hover/item:text-red-600 transition-colors">
+                      <Text variant="bodySmBold" className="line-clamp-2 group-hover/item:text-red-600 transition-colors">
                         {item.nombre}
-                      </h4>
+                      </Text>
                     </Link>
-                    <p className="text-[12px] text-gray-400 font-mono italic">
+                    <Text variant="mono">
                       Cód: {item.product_code}
-                    </p>
-                    <div className="mt-2">
-                      <span className="text-sm font-bold text-gray-900">
-                        Cantidad: {item.quantity}
-                      </span>
-                    </div>
+                    </Text>
+                    <Text variant="bodyXsBold" className="mt-2 text-gray-900">
+                      Cantidad: {item.quantity}
+                    </Text>
                   </div>
                 </div>
               );
@@ -171,25 +166,27 @@ export default function CheckoutPage() {
 
           <div className="mt-10 pt-8 border-t border-dashed border-gray-200 text-left">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-gray-400 italic">Presupuesto:</span>
-              <span className="text-gray-900 font-bold text-lg">A Consultar</span>
+              <Text variant="muted" className="italic">Presupuesto:</Text>
+              <Text variant="bodyBold" className="text-lg">A Consultar</Text>
             </div>
           </div>
 
           <div className="space-y-3 pt-6">
-            <button
+            <Button
               form="checkout-form"
               type="submit"
-              className="w-full bg-[#25D366] hover:bg-[#1fae53] text-white py-4 rounded-full font-bold flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg"
+              variant="success"
+              size="lg"
+              icon={MessageCircle}
+              className="w-full !bg-[#25D366] hover:!bg-[#1fae53] !py-4 !rounded-full shadow-lg"
             >
-              <MessageCircle fill="currentColor" size={20} />
-              <span className="text-base">Enviar pedido por WhatsApp</span>
-            </button>
+              Enviar pedido por WhatsApp
+            </Button>
             <div className="flex items-center gap-3 p-4 bg-gray-50/50 rounded-3xl border border-gray-100">
               <ShieldCheck className="text-blue-600 shrink-0" size={20} />
-              <p className="text-[10px] text-gray-400 leading-tight font-medium uppercase tracking-tight text-left">
+              <Text variant="mutedXs" className="uppercase tracking-tight text-left">
                 Tu pedido será verificado por stock antes del cobro.
-              </p>
+              </Text>
             </div>
           </div>
         </div>
