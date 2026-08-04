@@ -22,8 +22,8 @@ export function AuthProvider({ children }) {
     setLoading(false);
   }, []);
 
-  const login = useCallback(async (username, password) => {
-    const data = await loginService(username, password);
+  const login = useCallback(async (identificador, password) => {
+    const data = await loginService(identificador, password);
     setCliente(data.cliente);
     setIsLoggedIn(true);
     return data;

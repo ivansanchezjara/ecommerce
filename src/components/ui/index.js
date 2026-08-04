@@ -5,6 +5,7 @@ export { default as Badge } from './basics/Badge';
 export { default as BrandMark } from './basics/BrandMark';
 export { default as Field } from './basics/Field';
 export { default as Toggle } from './basics/Toggle';
+export { default as PhoneInput, validatePhone, buildPhoneValue, PHONE_PREFIXES } from './basics/PhoneInput';
 export * from './basics/Typography';
 
 // Feedback

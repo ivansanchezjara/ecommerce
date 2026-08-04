@@ -1,16 +1,35 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { getConfig, getTipoCambio } from "@/services/tienda";
+
+const STORAGE_KEY_MONEDA = "ecommerce_moneda";
+const MONEDAS_VALIDAS = ["PYG", "USD", "BRL"];
 
 const TiendaContext = createContext(null);
 
 export function TiendaProvider({ children }) {
   const [config, setConfig] = useState(null);
   const [tipoCambio, setTipoCambio] = useState(null);
-  const [monedaSeleccionada, setMonedaSeleccionada] = useState("PYG");
+  const [monedaSeleccionada, setMonedaSeleccionadaState] = useState("PYG");
   const [loading, setLoading] = useState(true);
+  const [tipoCambioLoading, setTipoCambioLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Restaurar moneda persistida al montar
+  useEffect(() => {
+    const guardada = localStorage.getItem(STORAGE_KEY_MONEDA);
+    if (guardada && MONEDAS_VALIDAS.includes(guardada)) {
+      setMonedaSeleccionadaState(guardada);
+    }
+  }, []);
+
+  // Persistir moneda al cambiar
+  const setMonedaSeleccionada = useCallback((moneda) => {
+    if (!MONEDAS_VALIDAS.includes(moneda)) return;
+    localStorage.setItem(STORAGE_KEY_MONEDA, moneda);
+    setMonedaSeleccionadaState(moneda);
+  }, []);
 
   useEffect(() => {
     async function fetchConfig() {
@@ -26,6 +45,7 @@ export function TiendaProvider({ children }) {
         console.error("Error cargando configuración de tienda:", err);
       } finally {
         setLoading(false);
+        setTipoCambioLoading(false);
       }
     }
     fetchConfig();
@@ -33,9 +53,11 @@ export function TiendaProvider({ children }) {
 
   /**
    * Convierte un precio en USD a la moneda seleccionada.
+   * Devuelve null si precioUSD es null/undefined (precio desconocido),
+   * y 0 solo si precioUSD es explícitamente 0 (producto gratis).
    */
   function convertirPrecio(precioUSD) {
-    if (!precioUSD) return 0;
+    if (precioUSD == null) return null;
     if (monedaSeleccionada === "USD") return precioUSD;
     if (!tipoCambio?.tasas?.[monedaSeleccionada]) return precioUSD;
 
@@ -45,9 +67,12 @@ export function TiendaProvider({ children }) {
 
   /**
    * Formatea un precio según la moneda seleccionada.
+   * Devuelve null si el precio es desconocido (para renderizar skeleton en UI).
    */
   function formatearPrecio(precioUSD) {
     const convertido = convertirPrecio(precioUSD);
+    if (convertido == null) return null;
+
     const simbolos = { USD: "US$", PYG: "₲", BRL: "R$" };
     const simbolo = simbolos[monedaSeleccionada] || "$";
 
@@ -70,6 +95,7 @@ export function TiendaProvider({ children }) {
         convertirPrecio,
         formatearPrecio,
         loading,
+        tipoCambioLoading,
         error,
       }}
     >

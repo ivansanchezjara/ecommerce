@@ -35,9 +35,18 @@
 
 @theme {
   --font-poppins: "Poppins", sans-serif;
-  /* Colores corporativos sugeridos para el sector odontológico */
-  --color-dental-blue: #0284c7;
-  --color-dental-light: #e0f2fe;
+
+  /* ── Paleta Dent-Par ───────────────────────────────────────────── */
+  --color-dental-blue: #191397;        /* Azul principal */
+  --color-dental-blue-hover: #120d75;  /* Azul hover (más oscuro) */
+  --color-dental-blue-light: #eef0ff;  /* Azul claro para fondos / hover states */
+  --color-dental-yellow: #fff113;      /* Amarillo acento — badges de oferta */
+  --color-dental-red: #c12a35;         /* Rojo alertas / precios tachados */
+  --color-dental-bg: #fcfcfc;          /* Fondo neutro limpio */
+  --color-dental-text: #1e293b;        /* Gris oscuro para texto */
+
+  /* Alias legacy — evita romper clases existentes que usen dental-light */
+  --color-dental-light: #eef0ff;
 }
 
 @layer base {
@@ -81,6 +90,5 @@
 
 .custom-pagination .swiper-pagination-bullet-active {
   width: 25px;
-  /* Actualizado para usar el azul corporativo en lugar del gris oscuro/negro */
   background: var(--color-dental-blue) !important;
 }

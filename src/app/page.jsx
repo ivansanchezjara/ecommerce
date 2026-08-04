@@ -20,27 +20,23 @@ import {
 import { useEffect, useState } from "react";
 import { useTienda } from "./context/TiendaContext";
 import { getProductos, getCategorias } from "@/services/tienda";
-import ProductsCarousel from "@/components/ui/ProductsCarousel";
+import { ProductsCarousel, HeroSection, Badge, Button, Heading, Text } from "@/components/ui";
 
-// Helper function to dynamically map an icon based on category name
+// Helper para mapear ícono según nombre de categoría
 function getCategoryIcon(name) {
-  const normalized = name.toLowerCase();
-  if (normalized.includes("equip")) return <Wrench className="w-6 h-6" />;
-  if (normalized.includes("instrument")) return <Stethoscope className="w-6 h-6" />;
-  if (normalized.includes("descart") || normalized.includes("desech") || normalized.includes("insum")) {
-    return <Layers className="w-6 h-6" />;
-  }
-  if (normalized.includes("ortodon")) return <Smile className="w-6 h-6" />;
-  if (normalized.includes("estet") || normalized.includes("blanquea")) return <Sparkles className="w-6 h-6" />;
-  if (normalized.includes("cirug") || normalized.includes("implante")) return <HeartPulse className="w-6 h-6" />;
-  if (normalized.includes("diagnos") || normalized.includes("radiograf")) return <Activity className="w-6 h-6" />;
+  const n = name.toLowerCase();
+  if (n.includes("equip")) return <Wrench className="w-6 h-6" />;
+  if (n.includes("instrument")) return <Stethoscope className="w-6 h-6" />;
+  if (n.includes("descart") || n.includes("desech") || n.includes("insum")) return <Layers className="w-6 h-6" />;
+  if (n.includes("ortodon")) return <Smile className="w-6 h-6" />;
+  if (n.includes("estet") || n.includes("blanquea")) return <Sparkles className="w-6 h-6" />;
+  if (n.includes("cirug") || n.includes("implante")) return <HeartPulse className="w-6 h-6" />;
+  if (n.includes("diagnos") || n.includes("radiograf")) return <Activity className="w-6 h-6" />;
   return <Package className="w-6 h-6" />;
 }
 
-import HeroSection from "@/components/ui/HeroSection";
-
 export default function Home() {
-  const { config, loading: configLoading } = useTienda();
+  const { config } = useTienda();
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -82,12 +78,19 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
               <div>
-                <span className="text-xs font-bold text-dental-blue uppercase tracking-widest">Explorar por rubro</span>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mt-1">Categorías Destacadas</h2>
+                <Badge variant="info" className="mb-2">Explorar por rubro</Badge>
+                <Heading level={2} className="text-2xl md:text-3xl mt-1">Categorías Destacadas</Heading>
               </div>
-              <Link href="/products" className="text-sm font-semibold text-dental-blue hover:underline flex items-center gap-1">
-                Ver todas las categorías <ArrowUpRight size={16} />
-              </Link>
+              <Button
+                as={Link}
+                href="/products"
+                variant="ghost"
+                size="sm"
+                icon={ArrowUpRight}
+                iconPosition="right"
+              >
+                Ver todas las categorías
+              </Button>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -101,13 +104,13 @@ export default function Home() {
                     {getCategoryIcon(cat.nombre)}
                   </div>
                   <div className="mt-4 flex flex-col items-center">
-                    <h3 className="font-semibold text-gray-900 text-sm group-hover:text-dental-blue transition-colors line-clamp-2">
+                    <Text as="h3" variant="bodySmBold" className="group-hover:text-dental-blue transition-colors line-clamp-2">
                       {cat.nombre}
-                    </h3>
+                    </Text>
                     {cat.cantidad_productos > 0 && (
-                      <span className="text-[10px] text-gray-400 mt-1 bg-gray-100 group-hover:bg-sky-50 px-2 py-0.5 rounded-full transition-colors">
-                        {cat.cantidad_productos} {cat.cantidad_productos === 1 ? 'producto' : 'productos'}
-                      </span>
+                      <Text variant="mutedXs" className="mt-1 bg-gray-100 group-hover:bg-sky-50 px-2 py-0.5 rounded-full transition-colors">
+                        {cat.cantidad_productos} {cat.cantidad_productos === 1 ? "producto" : "productos"}
+                      </Text>
                     )}
                   </div>
                 </Link>
@@ -130,22 +133,20 @@ export default function Home() {
       <section className="py-16 bg-white border-b border-gray-50">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center max-w-xl mx-auto mb-10">
-            <span className="text-xs font-bold text-dental-blue uppercase tracking-widest">¿Por qué elegirnos?</span>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mt-1">Servicio y Compromiso Profesional</h2>
+            <Badge variant="info" className="mb-3">¿Por qué elegirnos?</Badge>
+            <Heading level={2} className="text-2xl md:text-3xl mt-1">Servicio y Compromiso Profesional</Heading>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col items-center text-center gap-4 p-8 rounded-2xl bg-gradient-to-b from-sky-50/40 to-sky-50/10 border border-sky-100/50 transition-all hover:shadow-xl hover:shadow-sky-50/30 hover:-translate-y-1">
               <div className="w-16 h-16 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center text-dental-blue shadow-sm">
                 <ShieldCheck size={28} />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 text-lg">
-                  Calidad Garantizada
-                </h3>
-                <p className="text-sm text-gray-600 max-w-[240px] mx-auto mt-2 leading-relaxed">
+                <Heading level={3} className="text-lg">Calidad Garantizada</Heading>
+                <Text variant="bodySm" className="max-w-[240px] mx-auto mt-2 leading-relaxed">
                   Insumos odontológicos y médicos certificados bajo las más estrictas normas de bioseguridad.
-                </p>
+                </Text>
               </div>
             </div>
 
@@ -154,12 +155,10 @@ export default function Home() {
                 <Truck size={28} />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 text-lg">
-                  Envíos Rápidos
-                </h3>
-                <p className="text-sm text-gray-600 max-w-[240px] mx-auto mt-2 leading-relaxed">
+                <Heading level={3} className="text-lg">Envíos Rápidos</Heading>
+                <Text variant="bodySm" className="max-w-[240px] mx-auto mt-2 leading-relaxed">
                   Despacho ágil en Asunción y envíos a todo el territorio paraguayo para que tu clínica nunca se detenga.
-                </p>
+                </Text>
               </div>
             </div>
 
@@ -168,12 +167,10 @@ export default function Home() {
                 <Star size={28} />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 text-lg">
-                  Soporte Técnico Especializado
-                </h3>
-                <p className="text-sm text-gray-600 max-w-[240px] mx-auto mt-2 leading-relaxed">
+                <Heading level={3} className="text-lg">Soporte Técnico Especializado</Heading>
+                <Text variant="bodySm" className="max-w-[240px] mx-auto mt-2 leading-relaxed">
                   Asesoramiento personalizado de profesionales para ayudarte a elegir el equipamiento ideal.
-                </p>
+                </Text>
               </div>
             </div>
           </div>
@@ -184,28 +181,36 @@ export default function Home() {
       <section className="py-16 bg-gradient-to-r from-slate-900 via-slate-800 to-blue-950 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(2,132,199,0.15),transparent)] pointer-events-none" />
         <div className="max-w-5xl mx-auto px-4 text-center relative z-10 space-y-6">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-sky-400 border border-sky-400/20">
-            <Percent size={12} /> Beneficios Exclusivos
-          </span>
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
+          <Badge variant="info" className="bg-blue-500/10 text-sky-400 border border-sky-400/20" icon={Percent}>
+            <Percent size={12} className="mr-1" /> Beneficios Exclusivos
+          </Badge>
+          <Heading level={2} className="text-3xl md:text-4xl text-white">
             ¿Sos odontólogo o tenés una clínica médica?
-          </h2>
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto font-light leading-relaxed">
+          </Heading>
+          <Text variant="body" className="text-slate-300 max-w-2xl mx-auto font-light leading-relaxed">
             Registrate e ingresá con tu cuenta para acceder a nuestra lista de precios preferenciales, promociones especiales por cantidad y cotizaciones en el día.
-          </p>
+          </Text>
           <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link
+            <Button
+              as={Link}
               href="/login"
-              className="bg-white text-slate-900 font-bold px-8 py-3.5 rounded-full hover:bg-slate-100 transition-all shadow-lg active:scale-95"
+              variant="secondary"
+              size="lg"
+              className="rounded-full bg-white text-slate-900 hover:bg-slate-100 border-none shadow-lg"
             >
               Iniciar Sesión / Registrarse
-            </Link>
-            <Link
+            </Button>
+            <Button
+              as={Link}
               href="/about"
-              className="text-slate-300 hover:text-white font-semibold flex items-center gap-1 transition-colors"
+              variant="ghost"
+              size="lg"
+              icon={ArrowRight}
+              iconPosition="right"
+              className="text-slate-300 hover:text-white hover:bg-transparent border-none"
             >
-              Saber más sobre Dent-Par <ArrowRight size={16} />
-            </Link>
+              Saber más sobre Dent-Par
+            </Button>
           </div>
         </div>
       </section>

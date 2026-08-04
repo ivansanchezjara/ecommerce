@@ -10,14 +10,20 @@ export function CartProvider({ children }) {
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
 
-  // Cargar carrito desde localStorage al iniciar
+  // Cargar carrito desde localStorage al iniciar (solo en cliente)
   useEffect(() => {
-    const savedCart = localStorage.getItem("ecommerce_cart");
-    if (savedCart) setCart(JSON.parse(savedCart));
+    if (typeof window === "undefined") return;
+    try {
+      const savedCart = localStorage.getItem("ecommerce_cart");
+      if (savedCart) setCart(JSON.parse(savedCart));
+    } catch {
+      // localStorage corrupto — arrancar con carrito vacío
+    }
   }, []);
 
-  // Guardar en localStorage cada vez que cambie
+  // Guardar en localStorage cada vez que cambie (solo en cliente)
   useEffect(() => {
+    if (typeof window === "undefined") return;
     localStorage.setItem("ecommerce_cart", JSON.stringify(cart));
   }, [cart]);
 

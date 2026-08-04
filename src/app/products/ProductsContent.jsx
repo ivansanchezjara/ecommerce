@@ -5,8 +5,9 @@ import { getProductos, getCategorias, getMarcas } from "@/services/tienda";
 import { ProductCard } from "@/components/products/ProductsCard";
 import { PaginationInfo, PaginationControls } from "@/components/ui/Pagination";
 import ProductsFilters from "@/components/products/ProductsFilters";
-import Link from "next/link";
+import { LoadingScreen, EmptyState, Heading, Text } from "@/components/ui";
 import { SearchX } from "lucide-react";
+import Link from "next/link";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -119,22 +120,22 @@ export default function ProductsContent() {
       <header className="mb-8 flex flex-col items-center justify-center text-center">
         {searchQuery ? (
           <>
-            <p className="text-xs text-red-600 font-bold uppercase tracking-widest mb-2">
+            <Text variant="label" className="text-red-600 mb-2">
               Resultados de búsqueda
-            </p>
-            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">
+            </Text>
+            <Heading level={1} className="text-3xl lg:text-4xl">
               &ldquo;{searchQuery}&rdquo;
-            </h1>
+            </Heading>
           </>
         ) : (
           <>
-            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">
+            <Heading level={1} className="text-3xl lg:text-4xl">
               Nuestros Productos
-            </h1>
-            <div className="mt-3 flex items-center justify-center text-gray-500 font-medium bg-gray-50 px-4 py-1.5 rounded-full border border-gray-100">
-              <p className="text-xs font-medium uppercase tracking-wide">
+            </Heading>
+            <div className="mt-3 flex items-center justify-center bg-gray-50 px-4 py-1.5 rounded-full border border-gray-100">
+              <Text variant="label" className="text-gray-500">
                 {totalCount} productos disponibles
-              </p>
+              </Text>
             </div>
           </>
         )}
@@ -148,9 +149,7 @@ export default function ProductsContent() {
         {/* Grid de productos */}
         <div className="flex-1">
           {loading ? (
-            <div className="flex justify-center items-center min-h-[300px]">
-              <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
-            </div>
+            <LoadingScreen texto="Cargando productos..." />
           ) : products.length > 0 ? (
             <>
               <PaginationInfo
@@ -179,23 +178,13 @@ export default function ProductsContent() {
               />
             </>
           ) : (
-            <div className="text-center py-24 bg-gray-50/50 rounded-3xl border-2 border-dashed border-gray-200 flex flex-col items-center">
-              <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 mb-6">
-                <SearchX className="text-gray-300" size={40} strokeWidth={1.5} />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                No hay resultados
-              </h3>
-              <p className="text-gray-500 mb-8 px-4 max-w-sm mx-auto">
-                No encontramos productos con los filtros aplicados.
-              </p>
-              <button
-                onClick={clearAllFilters}
-                className="px-8 py-3 bg-gray-900 text-white rounded-full font-bold active:scale-95 transition-all"
-              >
-                Ver todo el catálogo
-              </button>
-            </div>
+            <EmptyState
+              icon={<SearchX size={40} strokeWidth={1.5} />}
+              titulo="No hay resultados"
+              descripcion="No encontramos productos con los filtros aplicados."
+              textoBoton="Ver todo el catálogo"
+              onAction={clearAllFilters}
+            />
           )}
         </div>
       </div>

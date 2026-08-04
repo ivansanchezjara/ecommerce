@@ -3,11 +3,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getProducto } from "@/services/tienda";
 import ProductDetailView from "@/components/products/ProductDetailView";
+import { LoadingScreen, EmptyState } from "@/components/ui";
 
 export default function ProductPage() {
   const params = useParams();
+  const router = useRouter();
   const slug = Array.isArray(params.slug) ? params.slug : [params.slug];
 
   // El slug del producto es siempre el último segmento
@@ -33,17 +36,22 @@ export default function ProductPage() {
   }, [productSlug]);
 
   if (loading) {
+    return <LoadingScreen texto="Cargando producto..." />;
+  }
+
+  if (error) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-[60vh] gap-4">
-        <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
-        <p className="text-xs font-medium text-gray-400 uppercase tracking-widest">
-          Cargando producto...
-        </p>
-      </div>
+      <EmptyState
+        icon="⚠️"
+        titulo="No pudimos cargar el producto"
+        descripcion="Ocurrió un error al obtener la información. Intentá de nuevo o volvé al catálogo."
+        textoBoton="Ver catálogo"
+        onAction={() => router.push("/products")}
+      />
     );
   }
 
-  if (error || !product) {
+  if (!product) {
     notFound();
   }
 

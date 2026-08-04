@@ -1,17 +1,17 @@
 import Link from "next/link";
+import { Heading, Text, Button } from "@/components/ui";
 
 export default function NotFound() {
   return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-6">
-      <h1 className="text-6xl font-bold text-gray-200 mb-4">404</h1>
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">Página no encontrada</h2>
-      <p className="text-gray-500 mb-8">La página que buscas no existe o fue movida.</p>
-      <Link
-        href="/"
-        className="px-6 py-3 bg-gray-900 text-white rounded-full font-bold hover:bg-gray-800 transition"
-      >
+    <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-6 gap-2">
+      <p className="text-8xl font-black text-slate-100 select-none">404</p>
+      <Heading level={2}>Página no encontrada</Heading>
+      <Text variant="bodySm" className="max-w-sm">
+        La página que buscas no existe o fue movida.
+      </Text>
+      <Button as={Link} href="/" variant="primary" size="lg" className="mt-4 rounded-full">
         Volver al inicio
-      </Link>
+      </Button>
     </div>
   );
 }
