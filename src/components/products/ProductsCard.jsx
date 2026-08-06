@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { ShoppingCart, Check, ListFilter, Lock } from "lucide-react";
 import { useCart } from "@/app/context/CartContext";
 import { useAuth } from "@/app/context/AuthContext";
 import { useTienda } from "@/app/context/TiendaContext";
 import { useState } from "react";
+import { Badge, Button, Text } from "@/components/ui";
 
 export function ProductCard({ product }) {
   const { addToCart } = useCart();
@@ -32,22 +32,22 @@ export function ProductCard({ product }) {
   };
 
   return (
-    <div className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full relative">
+    <div className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:shadow-dental-blue/5 transition-all duration-300 flex flex-col h-full relative">
       {/* Imagen */}
-      <div className="relative aspect-square overflow-hidden shrink-0">
+      <div className="relative aspect-[4/3] overflow-hidden shrink-0 bg-dental-blue-light">
         {product.featured && (
-          <span className="absolute top-2 left-2 bg-red-500 text-white text-[8px] uppercase font-bold px-2 py-0.5 rounded-full z-20 shadow-sm">
+          <Badge variant="warning" className="absolute top-2 left-2 text-[8px] px-2 py-0.5 z-20 shadow-sm bg-dental-yellow text-dental-text border-none">
             Destacado
-          </span>
+          </Badge>
         )}
         {imageUrl.startsWith("http") ? (
           <img
             src={imageUrl}
             alt={product.nombre_general}
-            className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500 ease-in-out"
+            className="object-contain w-full h-full p-2 group-hover:scale-105 transition-transform duration-500 ease-in-out"
           />
         ) : (
-          <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center">
             <span className="text-gray-400 text-xs">Sin imagen</span>
           </div>
         )}
@@ -55,66 +55,54 @@ export function ProductCard({ product }) {
 
       {/* Detalles */}
       <div className="p-3 flex flex-col grow text-left">
-        <span className="text-[9px] text-amber-600 font-bold uppercase tracking-widest mb-1 truncate">
+        <Text variant="label" className="text-dental-blue mb-1 truncate">
           {product.categoria_nombre || product.brand || "General"}
-        </span>
+        </Text>
 
-        <h3 className="text-sm font-medium text-gray-900 mb-2 leading-tight group-hover:underline underline-offset-2 transition-all line-clamp-3 min-h-[2.5em]">
+        <Text as="h3" variant="bodySmBold" className="mb-2 leading-tight group-hover:text-dental-blue transition-colors line-clamp-3 min-h-[2.5em]">
           {product.nombre_general}
-        </h3>
+        </Text>
 
         <div className="mt-auto flex flex-col gap-2">
           {/* Precio */}
           <div className="flex justify-between items-end border-t border-gray-50 pt-2">
             <div className="flex flex-col">
-              <span className="text-[9px] text-gray-400 uppercase font-medium">
+              <Text variant="label" className="text-gray-400">
                 Precio
-              </span>
+              </Text>
               {isLoggedIn && product.precio_desde ? (
-                <span className="text-sm font-bold text-gray-800 leading-none">
+                <Text variant="bodySmBold" className="text-dental-text leading-none">
                   Desde {formatearPrecio(product.precio_desde)}
-                </span>
+                </Text>
               ) : isLoggedIn ? (
-                <span className="text-sm font-bold text-gray-800 leading-none">
+                <Text variant="bodySmBold" className="text-dental-text leading-none">
                   Consultar
-                </span>
+                </Text>
               ) : (
-                <span className="text-xs text-gray-500 flex items-center gap-1">
+                <Text variant="bodyXs" className="text-gray-500 flex items-center gap-1">
                   <Lock size={10} />
                   Ingresar para ver
-                </span>
+                </Text>
               )}
             </div>
           </div>
 
           {/* Botón */}
-          <button
+          <Button
             onClick={handleAdd}
-            className={`w-full py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 ${
+            variant={hasVariants ? "primary" : added ? "success" : "secondary"}
+            size="sm"
+            icon={hasVariants ? ListFilter : added ? Check : ShoppingCart}
+            className={`w-full rounded-xl ${
               hasVariants
-                ? "bg-gray-900 text-white hover:bg-gray-800"
+                ? "bg-dental-blue hover:bg-dental-blue-hover border-dental-blue"
                 : added
-                ? "bg-green-500 text-white"
-                : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
+                ? ""
+                : "bg-dental-blue-light text-dental-blue border-dental-blue-light hover:bg-dental-blue hover:text-white hover:border-dental-blue"
             }`}
           >
-            {hasVariants ? (
-              <>
-                <ListFilter size={14} />
-                Ver opciones
-              </>
-            ) : added ? (
-              <>
-                <Check size={14} />
-                ¡Agregado!
-              </>
-            ) : (
-              <>
-                <ShoppingCart size={14} />
-                Añadir
-              </>
-            )}
-          </button>
+            {hasVariants ? "Ver opciones" : added ? "¡Agregado!" : "Añadir"}
+          </Button>
         </div>
       </div>
     </div>

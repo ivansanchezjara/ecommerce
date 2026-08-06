@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import { Button } from "@/components/ui";
 
 const variants = {
     enter: (direction) => ({
@@ -68,18 +69,22 @@ export default function ImageCarousel({ images }) {
             </AnimatePresence>
 
             {/* Botones de Navegación */}
-            <button
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-white/30 backdrop-blur-md rounded-full hover:bg-white/50 transition-colors"
+            <Button
+                variant="ghost"
+                size="icon"
+                icon={ChevronLeft}
                 onClick={() => paginate(-1)}
-            >
-                <ChevronLeft className="text-white" size={30} />
-            </button>
-            <button
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-white/30 backdrop-blur-md rounded-full hover:bg-white/50 transition-colors"
+                aria-label="Imagen anterior"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/30 backdrop-blur-md hover:bg-white/50 border-none text-white rounded-full [&_svg]:size-7"
+            />
+            <Button
+                variant="ghost"
+                size="icon"
+                icon={ChevronRight}
                 onClick={() => paginate(1)}
-            >
-                <ChevronRight className="text-white" size={30} />
-            </button>
+                aria-label="Siguiente imagen"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/30 backdrop-blur-md hover:bg-white/50 border-none text-white rounded-full [&_svg]:size-7"
+            />
 
             {/* Indicadores (Puntos) */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2">

@@ -1,6 +1,7 @@
 "use client";
-import { ChevronDown, ChevronUp, Filter, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Filter } from "lucide-react";
 import { useState } from "react";
+import { Button, Heading, Text } from "@/components/ui";
 
 export default function ProductsFilters({ filterGroups, clearAll }) {
   const [isOpen, setIsOpen] = useState(() =>
@@ -9,25 +10,29 @@ export default function ProductsFilters({ filterGroups, clearAll }) {
 
   return (
     <div className="w-full md:w-64 flex-shrink-0 mb-8 md:mb-0">
-      <button
+      <Button
+        variant="outline"
+        size="sm"
+        icon={Filter}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm text-gray-700 font-semibold text-sm hover:bg-gray-50 transition-all mb-4"
+        className="mb-4"
       >
-        <Filter size={16} />
         {isOpen ? "Ocultar" : "Filtrar"}
-      </button>
+      </Button>
 
       {isOpen && (
         <aside className="w-full flex flex-col gap-6 pr-0 md:pr-6 border-b md:border-b-0 md:border-r border-gray-100 pb-8 md:pb-0">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-gray-900">Filtros</h3>
+            <Heading level={4}>Filtros</Heading>
             {clearAll && (
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={clearAll}
-                className="text-xs text-red-600 hover:underline font-medium"
+                className="text-red-600 hover:text-red-700 hover:bg-transparent border-none p-0 underline"
               >
                 Borrar todo
-              </button>
+              </Button>
             )}
           </div>
 
@@ -53,9 +58,9 @@ function FilterGroup({ group }) {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-between w-full py-2 group"
       >
-        <span className="text-sm font-bold text-gray-700 uppercase tracking-wider group-hover:text-gray-900 transition-colors">
+        <Text variant="bodyXsBold" className="uppercase tracking-wider text-gray-700 group-hover:text-gray-900 transition-colors">
           {group.title}
-        </span>
+        </Text>
         {isOpen ? (
           <ChevronUp size={16} className="text-gray-400" />
         ) : (
@@ -79,16 +84,18 @@ function FilterGroup({ group }) {
                   <div className="w-1.5 h-1.5 bg-white rounded-full" />
                 )}
               </div>
-              <span
-                className={`text-sm ${
+              <Text
+                as="span"
+                variant={group.active === option ? "bodySmBold" : "bodySm"}
+                className={`${
                   group.active === option
-                    ? "text-gray-900 font-medium"
+                    ? "text-gray-900"
                     : "text-gray-600 group-hover/item:text-gray-900"
                 }`}
                 onClick={() => group.setActive(option)}
               >
                 {option}
-              </span>
+              </Text>
             </label>
           ))}
         </div>

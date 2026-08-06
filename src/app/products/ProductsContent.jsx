@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { getProductos, getCategorias, getMarcas } from "@/services/tienda";
+import { registrarBusqueda } from "@/services/cuenta";
 import { ProductCard } from "@/components/products/ProductsCard";
 import { PaginationInfo, PaginationControls } from "@/components/ui/Pagination";
 import ProductsFilters from "@/components/products/ProductsFilters";
@@ -57,6 +58,12 @@ export default function ProductsContent() {
         const data = await getProductos(params);
         setProducts(data.results || data);
         setTotalCount(data.count || (data.results || data).length);
+
+        // Registrar búsqueda en historial (server-side, silencioso)
+        if (searchQuery && searchQuery.trim().length >= 2) {
+          const count = data.count || (data.results || data).length;
+          registrarBusqueda(searchQuery.trim(), count).catch(() => {});
+        }
       } catch (err) {
         console.error("Error cargando productos:", err);
         setProducts([]);

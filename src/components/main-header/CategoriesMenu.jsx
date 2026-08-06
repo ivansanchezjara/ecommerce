@@ -3,8 +3,9 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ChevronDown, ChevronRight, Package } from "lucide-react";
 import { getCategorias } from "@/services/tienda";
+import { Text, Badge } from "@/components/ui";
 
-export default function CategoriesMenu({ mobile = false, onItemClick }) {
+export default function CategoriesMenu({ mobile = false, onItemClick, dark = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const [categorias, setCategorias] = useState([]);
   const menuRef = useRef(null);
@@ -50,9 +51,9 @@ export default function CategoriesMenu({ mobile = false, onItemClick }) {
         >
           <div className="flex items-center gap-3">
             <Package size={18} className="text-gray-400" />
-            <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">
+            <Text variant="bodySm" className="text-gray-600 group-hover:text-gray-900 transition-colors">
               Ver todos
-            </span>
+            </Text>
           </div>
           <ChevronRight size={16} className="text-gray-300 group-hover:text-gray-900" />
         </Link>
@@ -68,14 +69,14 @@ export default function CategoriesMenu({ mobile = false, onItemClick }) {
           >
             <div className="flex items-center gap-3">
               <Package size={18} className="text-gray-400" />
-              <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">
+              <Text variant="bodySm" className="text-gray-600 group-hover:text-gray-900 transition-colors">
                 {cat.nombre}
-              </span>
+              </Text>
             </div>
             {cat.cantidad_productos > 0 && (
-              <span className="text-xs text-gray-400">
+              <Badge variant="default" className="text-[10px] px-1.5 py-0">
                 {cat.cantidad_productos}
-              </span>
+              </Badge>
             )}
           </Link>
         </div>
@@ -119,7 +120,9 @@ export default function CategoriesMenu({ mobile = false, onItemClick }) {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`relative flex items-center gap-1 h-full transition-colors font-medium cursor-pointer ${
-          isOpen ? "text-gray-900" : "text-gray-600 hover:text-gray-900"
+          dark
+            ? (isOpen ? "text-dental-yellow" : "text-white hover:text-dental-yellow")
+            : (isOpen ? "text-gray-900" : "text-gray-600 hover:text-gray-900")
         }`}
       >
         <span>Productos</span>
@@ -128,7 +131,7 @@ export default function CategoriesMenu({ mobile = false, onItemClick }) {
           className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
         />
         {isOpen && (
-          <span className="absolute bottom-[-13px] left-0 w-full h-0.5 bg-gray-900" />
+          <span className={`absolute bottom-[-13px] left-0 w-full h-0.5 rounded-full ${dark ? "bg-dental-yellow" : "bg-gray-900"}`} />
         )}
       </button>
 

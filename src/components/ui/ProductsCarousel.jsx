@@ -5,6 +5,8 @@ import { ArrowRight, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import { ProductCard } from "@/components/products/ProductsCard";
+import { Heading, Text } from "./basics/Typography";
+import Button from "./basics/Button";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -27,23 +29,27 @@ export default function ProductsCarousel({
     <section className="pt-4 relative group/carousel">
       <div className="mx-auto px-4">
         <div className="flex flex-row items-baseline mb-4 gap-4">
-          <h2 className="text-xl md:text-2xl text-gray-900 leading-tight tracking-tight">
+          <Heading level={3} className="text-xl md:text-2xl">
             {title}
-          </h2>
-          <Link
+          </Heading>
+          <Button
+            as={Link}
             href={viewAllLink}
-            className="group flex items-center gap-0.5 font-semibold text-xs md:text-sm text-red-600 hover:underline mb-0.5"
+            variant="ghost"
+            size="sm"
+            icon={ArrowRight}
+            iconPosition="right"
+            className="text-dental-blue hover:text-dental-blue-hover hover:bg-transparent border-none p-0"
           >
             Ver más
-            <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-          </Link>
+          </Button>
         </div>
 
         <div className="relative">
-          <button id={prevId} className="hidden md:flex absolute top-1/2 -left-4 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg border border-gray-100 text-gray-700 hover:bg-gray-900 hover:text-white items-center justify-center transition-all opacity-0 group-hover/carousel:opacity-100 disabled:opacity-0 cursor-pointer">
+          <button id={prevId} className="hidden md:flex absolute top-1/2 -left-4 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg border border-gray-100 text-gray-700 hover:bg-dental-blue hover:text-white items-center justify-center transition-all opacity-0 group-hover/carousel:opacity-100 disabled:opacity-0 cursor-pointer">
             <ChevronLeft size={20} />
           </button>
-          <button id={nextId} className="hidden md:flex absolute top-1/2 -right-4 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg border border-gray-100 text-gray-700 hover:bg-gray-900 hover:text-white items-center justify-center transition-all opacity-0 group-hover/carousel:opacity-100 disabled:opacity-0 cursor-pointer">
+          <button id={nextId} className="hidden md:flex absolute top-1/2 -right-4 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg border border-gray-100 text-gray-700 hover:bg-dental-blue hover:text-white items-center justify-center transition-all opacity-0 group-hover/carousel:opacity-100 disabled:opacity-0 cursor-pointer">
             <ChevronRight size={20} />
           </button>
 
@@ -71,11 +77,13 @@ export default function ProductsCarousel({
 
             {hasMore && (
               <SwiperSlide>
-                <Link href={viewAllLink} className="flex flex-col items-center justify-center h-full min-h-[200px] bg-white rounded-2xl border-2 border-dashed border-gray-200 hover:border-gray-900 hover:bg-gray-50 transition-all group">
-                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3 group-hover:bg-gray-900 group-hover:text-white transition-colors">
+                <Link href={viewAllLink} className="flex flex-col items-center justify-center h-full min-h-[200px] bg-white rounded-2xl border-2 border-dashed border-gray-200 hover:border-dental-blue hover:bg-dental-blue-light transition-all group">
+                  <div className="w-12 h-12 rounded-full bg-dental-blue-light flex items-center justify-center mb-3 group-hover:bg-dental-blue group-hover:text-white transition-colors text-dental-blue">
                     <Plus size={24} />
                   </div>
-                  <span className="font-bold text-sm text-gray-700 group-hover:text-gray-900 transition-colors text-center px-4">Ver más</span>
+                  <Text variant="bodySmBold" className="group-hover:text-dental-blue transition-colors text-center px-4">
+                    Ver más
+                  </Text>
                 </Link>
               </SwiperSlide>
             )}

@@ -36,17 +36,30 @@
 @theme {
   --font-poppins: "Poppins", sans-serif;
 
-  /* ── Paleta Dent-Par ───────────────────────────────────────────── */
-  --color-dental-blue: #191397;        /* Azul principal */
-  --color-dental-blue-hover: #120d75;  /* Azul hover (más oscuro) */
-  --color-dental-blue-light: #eef0ff;  /* Azul claro para fondos / hover states */
-  --color-dental-yellow: #fff113;      /* Amarillo acento — badges de oferta */
-  --color-dental-red: #c12a35;         /* Rojo alertas / precios tachados */
-  --color-dental-bg: #fcfcfc;          /* Fondo neutro limpio */
-  --color-dental-text: #1e293b;        /* Gris oscuro para texto */
+  /* ── 1. Marca & UI Principal (Basado en tu azul favorito #024b8f) ─ */
+  --color-dental-navy: #024b8f;        /* Azul Dominante: Headers, botones principales, CTAs */
+  --color-dental-navy-dark: #012d57;   /* Azul Profundo: Footers, hover de botones, bordes */
+  --color-dental-blue-hover: #013b70;  /* Hover para el azul principal */
+  --color-dental-blue-light: #f0f6fc;  /* Fondo suave: Tarjetas al pasar mouse, alertas claras */
+  --color-dental-surface: #e1ebf5;     /* Superficies: Banners secundarios, backgrounds destacados */
 
-  /* Alias legacy — evita romper clases existentes que usen dental-light */
-  --color-dental-light: #eef0ff;
+  /* ── 2. Elementos del Logo Dent-Par ─────────────────────────────── */
+  --color-dental-blue: #191397;        /* Azul original del logo (uso puntual de identidad) */
+  --color-dental-yellow: #fff113;      /* Amarillo acento: Badges de oferta, insignias */
+  --color-dental-red: #c12a35;         /* Rojo logo: Precios tachados, destacados */
+
+  /* ── 3. Neutros & Estructura ────────────────────────────────────── */
+  --color-dental-bg: #fcfcfc;          /* Fondo base de la tienda */
+  --color-dental-card: #ffffff;        /* Fondo blanco puro para tarjetas de producto */
+  --color-dental-text: #0f172a;        /* Texto principal (Slate 900 para legibilidad máxima) */
+  --color-dental-muted: #64748b;       /* Texto secundario / subtítulos */
+
+  /* ── 4. Estados del Sistema ─────────────────────────────────────── */
+  --color-dental-success: #25d366;     /* WhatsApp / Mensajes de éxito */
+  --color-dental-danger: #dc2626;      /* Rojo del sistema para errores / eliminar */
+
+  /* ── Alias Legacy ────────────────────────────────────────────────── */
+  --color-dental-light: var(--color-dental-blue-light);
 }
 
 @layer base {

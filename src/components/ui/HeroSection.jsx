@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { Heading, Text } from "./basics/Typography";
+import Badge from "./basics/Badge";
+import Button from "./basics/Button";
 
 export default function HeroSection({ logoUrl, nombreEmpresa, slogan }) {
   return (
@@ -25,31 +28,39 @@ export default function HeroSection({ logoUrl, nombreEmpresa, slogan }) {
         )}
 
         <div className="flex-1 space-y-6 text-center md:text-left flex flex-col items-center md:items-start justify-center animate-fade-up">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-dental-light text-dental-blue border border-blue-100">
+          <Badge variant="info" className="bg-dental-light text-dental-blue border-blue-100 gap-1.5">
             <Sparkles size={12} className="animate-pulse" /> Distribuidor Oficial en Paraguay
-          </span>
+          </Badge>
           
-          <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight tracking-tight">
+          <Heading level={1} className="text-4xl md:text-6xl">
             {nombreEmpresa}
-          </h1>
+          </Heading>
 
-          <p className="text-lg md:text-xl text-gray-600 max-w-lg font-light leading-relaxed">
+          <Text variant="body" className="text-lg md:text-xl text-gray-600 max-w-lg font-light leading-relaxed">
             {slogan}
-          </p>
+          </Text>
 
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center md:justify-start">
-            <Link
+            <Button
+              as={Link}
               href="/products"
-              className="bg-gray-900 text-white px-10 py-4 rounded-full font-semibold flex items-center justify-center gap-2 hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-gray-200"
+              variant="primary"
+              size="lg"
+              icon={ArrowRight}
+              iconPosition="right"
+              className="rounded-full bg-gray-900 hover:bg-gray-800 border-gray-900 shadow-lg shadow-gray-200 px-10"
             >
-              Ver Catálogo <ArrowRight size={18} />
-            </Link>
-            <Link
+              Ver Catálogo
+            </Button>
+            <Button
+              as={Link}
               href="/about"
-              className="bg-white border border-gray-200 text-gray-700 px-10 py-4 rounded-full font-semibold hover:bg-gray-50 transition-all text-center hover:border-gray-300"
+              variant="outline"
+              size="lg"
+              className="rounded-full px-10"
             >
               Sobre Nosotros
-            </Link>
+            </Button>
           </div>
         </div>
       </div>

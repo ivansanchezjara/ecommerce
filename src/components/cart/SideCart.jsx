@@ -4,6 +4,7 @@ import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Button, Heading, Text, EmptyState } from "@/components/ui";
 
 export default function SideCart() {
   const router = useRouter();
@@ -53,29 +54,33 @@ export default function SideCart() {
         {/* Header */}
         <div className="p-6 bg-white border-b border-gray-100 flex justify-between items-center shadow-sm shrink-0">
           <div className="flex flex-col items-start text-left">
-            <h2 className="font-bold text-xl text-gray-900 leading-tight">
+            <Heading level={3} className="text-xl leading-tight">
               Mi Pedido
-            </h2>
-            <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-0.5">
+            </Heading>
+            <Text variant="label" className="mt-0.5 text-gray-400">
               {cartCount}{" "}
               {cartCount === 1 ? "Producto seleccionado" : "Productos seleccionados"}
-            </p>
+            </Text>
           </div>
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
+            icon={X}
             onClick={closeCart}
-            className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-gray-50 rounded-full transition-all shrink-0"
-          >
-            <X size={22} strokeWidth={2.5} />
-          </button>
+            className="text-gray-400 hover:text-red-500 rounded-full shrink-0"
+            aria-label="Cerrar carrito"
+          />
         </div>
 
         {/* Lista de Productos */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {cart.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center py-20">
-              <ShoppingBag size={64} className="text-gray-100 mb-4" />
-              <p className="text-gray-400 font-medium">No hay productos aún</p>
-            </div>
+            <EmptyState
+              icon={<ShoppingBag size={48} strokeWidth={1} />}
+              titulo="No hay productos aún"
+              descripcion="Agregá productos desde el catálogo para armar tu pedido."
+              inline
+            />
           ) : (
             cart.map((item) => {
               const uniqueKey = item.variante_id || item.product_code;
@@ -106,39 +111,47 @@ export default function SideCart() {
                         onClick={closeCart}
                         className="group/title"
                       >
-                        <h4 className="text-sm font-bold text-gray-900 leading-tight mb-1 line-clamp-2 text-left group-hover/title:text-red-600 transition-colors duration-200">
+                        <Text
+                          as="h4"
+                          variant="bodySmBold"
+                          className="leading-tight mb-1 line-clamp-2 group-hover/title:text-red-600 transition-colors duration-200"
+                        >
                           {item.nombre}
-                        </h4>
+                        </Text>
                       </Link>
-                      <p className="text-[10px] text-gray-400 font-mono text-left italic">
+                      <Text variant="mono" className="italic">
                         {item.product_code}
-                      </p>
+                      </Text>
                     </div>
 
                     <div className="flex items-center justify-between w-full mt-2">
                       <div className="flex items-center bg-gray-100 rounded-lg p-1 border border-gray-200">
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          icon={Minus}
                           onClick={() => decreaseQuantity(uniqueKey)}
-                          className="p-1 text-gray-500 hover:text-red-500"
-                        >
-                          <Minus size={14} />
-                        </button>
-                        <span className="w-8 text-center text-xs font-bold text-gray-900">
+                          className="p-1 text-gray-500 hover:text-red-500 hover:bg-transparent border-none"
+                        />
+                        <Text as="span" variant="bodyXsBold" className="w-8 text-center text-gray-900">
                           {item.quantity}
-                        </span>
-                        <button
+                        </Text>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          icon={Plus}
                           onClick={() => addToCart(item)}
-                          className="p-1 text-gray-500 hover:text-gray-900"
-                        >
-                          <Plus size={14} />
-                        </button>
+                          className="p-1 text-gray-500 hover:text-gray-900 hover:bg-transparent border-none"
+                        />
                       </div>
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        icon={Trash2}
                         onClick={() => removeFromCart(uniqueKey)}
-                        className="text-gray-300 hover:text-red-500 transition-colors"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                        className="text-gray-300 hover:text-red-500 hover:bg-transparent border-none"
+                        aria-label="Eliminar producto"
+                      />
                     </div>
                   </div>
                 </div>
@@ -149,19 +162,20 @@ export default function SideCart() {
 
         {/* Footer */}
         <div className="p-6 bg-gray-50 border-t border-gray-100 shrink-0">
-          <button
+          <Button
             disabled={cart.length === 0}
-            onClick={() => {
-              closeCart();
-              router.push("/checkout");
-            }}
-            className="w-full bg-gray-900 text-white py-5 rounded-full font-bold flex items-center justify-center gap-2 shadow-xl active:scale-95 transition-all disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none"
+            onClick={() => { closeCart(); router.push("/checkout"); }}
+            variant="primary"
+            size="lg"
+            icon={ArrowRight}
+            iconPosition="right"
+            className="w-full rounded-full py-5 shadow-xl bg-gray-900 hover:bg-gray-800 border-none"
           >
-            Solicitar Presupuesto <ArrowRight size={20} />
-          </button>
-          <p className="text-[10px] text-center mt-4 text-gray-400 uppercase tracking-widest font-bold">
+            Solicitar Presupuesto
+          </Button>
+          <Text variant="label" className="text-center mt-4 text-gray-400">
             Respuesta rápida por WhatsApp
-          </p>
+          </Text>
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import { useTienda } from "@/app/context/TiendaContext";
 import { useCart } from "@/app/context/CartContext";
 import { getPrecios } from "@/services/tienda";
+import { Button, Badge, Heading, Text } from "@/components/ui";
 
 export default function ProductDetailView({ product }) {
   const { isLoggedIn } = useAuth();
@@ -91,46 +92,46 @@ export default function ProductDetailView({ product }) {
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div className="flex items-center flex-wrap gap-2">
-              <span className="text-amber-600 text-[12px] font-bold uppercase tracking-[0.2em]">
+              <Badge variant="warning" className="text-[12px]">
                 {product.categoria?.nombre || "General"}
-              </span>
+              </Badge>
               {product.brand && (
                 <>
                   <span className="text-gray-300">|</span>
-                  <span className="text-gray-500 text-[12px] font-medium uppercase tracking-wider">
+                  <Text variant="label" className="text-gray-500">
                     {product.brand}
-                  </span>
+                  </Text>
                 </>
               )}
             </div>
             {currentVariante && (
-              <span className="w-fit bg-gray-100 text-gray-400 text-[10px] font-mono px-2 py-0.5 rounded uppercase">
+              <Text variant="mono" className="w-fit bg-gray-100 px-2 py-0.5 rounded uppercase">
                 #{currentVariante.product_code}
-              </span>
+              </Text>
             )}
           </div>
 
           {/* Título */}
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 leading-tight">
+          <Heading level={1} className="text-2xl lg:text-3xl mb-2 leading-tight">
             {product.nombre_general}
             {currentVariante && variantes.length > 1 && (
               <span className="text-red-600 ml-2">{currentVariante.nombre_variante}</span>
             )}
-          </h1>
+          </Heading>
 
           {/* Descripción */}
           {product.description && (
-            <p className="text-gray-600 mb-4">{product.description}</p>
+            <Text variant="bodySm" className="text-gray-600 mb-4">{product.description}</Text>
           )}
 
           {product.long_description && (
             <div className="mb-6">
-              <h2 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">
+              <Text variant="label" className="text-gray-400 mb-3">
                 Descripción Detallada
-              </h2>
-              <p className="text-base text-gray-700 leading-relaxed font-light">
+              </Text>
+              <Text variant="body" className="text-gray-700 leading-relaxed font-light">
                 {product.long_description}
-              </p>
+              </Text>
             </div>
           )}
 
@@ -168,10 +169,10 @@ export default function ProductDetailView({ product }) {
           {product.tags && product.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-6">
               {product.tags.map((tag, index) => (
-                <span key={index} className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-600 text-[9px] rounded-lg border border-gray-200 uppercase">
+                <Badge key={index} variant="default" className="text-[9px] gap-1.5 px-3 py-1">
                   <Tag size={10} className="text-gray-400" />
                   {tag}
-                </span>
+                </Badge>
               ))}
             </div>
           )}
@@ -179,9 +180,9 @@ export default function ProductDetailView({ product }) {
           {/* Selector de Variantes */}
           {variantes.length > 1 && (
             <div className="mb-6">
-              <h2 className="text-[10px] font-bold text-red-600 uppercase tracking-widest mb-3">
+              <Text variant="label" className="text-red-600 mb-3">
                 Seleccionar opción
-              </h2>
+              </Text>
               <div className="flex flex-wrap gap-2">
                 {variantes.map((v) => (
                   <button
@@ -206,33 +207,33 @@ export default function ProductDetailView({ product }) {
               <div className="flex flex-col">
                 {currentVariante && getPrecioVariante(currentVariante.id) ? (
                   <>
-                    <span className="text-2xl lg:text-3xl font-bold text-gray-900 leading-none">
+                    <Heading level={2} className="text-2xl lg:text-3xl leading-none">
                       {formatearPrecio(getPrecioVariante(currentVariante.id).precio)}
-                    </span>
+                    </Heading>
                     {getPrecioVariante(currentVariante.id).oferta_activa && (
-                      <span className="text-sm text-red-600 font-medium mt-1">
+                      <Text variant="bodySm" className="text-red-600 mt-1">
                         Oferta: {formatearPrecio(getPrecioVariante(currentVariante.id).precio_oferta)}
-                      </span>
+                      </Text>
                     )}
                   </>
                 ) : (
-                  <span className="text-xl font-bold text-gray-900">
+                  <Heading level={3} className="text-xl">
                     {variantes.length > 1 && !currentVariante
                       ? "Seleccione una opción"
                       : "Consultar precio"}
-                  </span>
+                  </Heading>
                 )}
                 {currentVariante?.tiene_stock === false && (
-                  <span className="text-xs text-red-600 font-medium mt-1">Sin stock disponible</span>
+                  <Text variant="bodyXs" className="text-red-600 mt-1">Sin stock disponible</Text>
                 )}
               </div>
             ) : (
               <div className="flex items-center gap-2 bg-gray-50 px-4 py-3 rounded-xl border border-gray-200">
                 <Lock size={16} className="text-gray-400" />
                 <div className="flex flex-col">
-                  <span className="text-sm font-medium text-gray-700">
+                  <Text variant="bodySm" className="text-gray-700">
                     Inicie sesión para ver precios
-                  </span>
+                  </Text>
                   <Link href="/login" className="text-xs text-red-600 font-medium hover:underline">
                     Ingresar aquí
                   </Link>
@@ -245,46 +246,55 @@ export default function ProductDetailView({ product }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
             <div className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50/50 border border-gray-100">
               <ShieldCheck className="text-blue-600" size={20} />
-              <div className="flex flex-col text-xs font-bold text-gray-900 uppercase">
-                Garantía {product.brand || ""}
-                <span className="text-[10px] text-gray-400 font-normal italic">Original Certificado</span>
+              <div className="flex flex-col">
+                <Text variant="bodyXsBold" className="uppercase text-gray-900">
+                  Garantía {product.brand || ""}
+                </Text>
+                <Text variant="mutedXs" className="italic">Original Certificado</Text>
               </div>
             </div>
             <div className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50/50 border border-gray-100">
               <Truck className="text-green-600" size={20} />
-              <div className="flex flex-col text-xs font-bold text-gray-900 uppercase">
-                Envío Nacional
-                <span className="text-[10px] text-gray-400 font-normal italic">Todo el territorio</span>
+              <div className="flex flex-col">
+                <Text variant="bodyXsBold" className="uppercase text-gray-900">
+                  Envío Nacional
+                </Text>
+                <Text variant="mutedXs" className="italic">Todo el territorio</Text>
               </div>
             </div>
           </div>
 
           {/* Botones de Acción */}
           <div className="flex flex-row gap-3 w-full items-center">
-            <button
+            <Button
               onClick={handleAddToCart}
               disabled={!currentVariante || (variantes.length > 1 && !selectedVariante)}
-              className={`flex-1 h-14 rounded-full font-bold flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg ${
+              variant="primary"
+              size="lg"
+              icon={ShoppingCart}
+              className={`flex-1 h-14 rounded-full shadow-lg ${
                 addedToCart
-                  ? "bg-green-500 text-white"
-                  : "bg-gray-900 text-white hover:bg-gray-800 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
+                  ? "bg-green-500 hover:bg-green-500 border-green-500"
+                  : "bg-gray-900 hover:bg-gray-800 border-gray-900"
               }`}
             >
-              <ShoppingCart size={18} />
-              <span>{addedToCart ? "¡Agregado!" : "Agregar al carrito"}</span>
-            </button>
+              {addedToCart ? "¡Agregado!" : "Agregar al carrito"}
+            </Button>
 
-            <Link
+            <Button
+              as={Link}
               href={`https://api.whatsapp.com/send?phone=595983188000&text=${encodeURIComponent(
                 `Hola, me interesa: ${product.nombre_general}${currentVariante ? ` - ${currentVariante.nombre_variante}` : ""}`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 min-w-0 h-14 bg-[#25D366] text-white rounded-full font-bold hover:bg-[#128C7E] active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 px-2"
+              variant="success"
+              size="lg"
+              icon={MessageCircle}
+              className="flex-1 min-w-0 h-14 rounded-full shadow-lg bg-[#25D366] hover:bg-[#128C7E] border-[#25D366]"
             >
-              <MessageCircle size={18} fill="currentColor" />
               <span className="text-[13px] md:text-base truncate">WhatsApp</span>
-            </Link>
+            </Button>
           </div>
         </div>
       </div>

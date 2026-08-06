@@ -3,6 +3,7 @@
 import { MessageCircle, Mail, Phone, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useTienda } from "@/app/context/TiendaContext";
+import { Text, Heading } from "@/components/ui";
 
 export default function Footer() {
   const { config } = useTienda();
@@ -12,7 +13,6 @@ export default function Footer() {
   const telefono = config?.telefono;
   const email = config?.email;
   const instagram = config?.instagram;
-  const facebook = config?.facebook;
   const sucursales = config?.sucursales || [];
 
   return (
@@ -21,121 +21,105 @@ export default function Footer() {
         {/* Brand */}
         <div className="flex flex-col items-center md:items-start gap-3">
           <Link href="/" className="inline-block">
-            <span className="text-xl font-bold">{nombreEmpresa}</span>
+            <Heading level={5} className="text-white">
+              {nombreEmpresa}
+            </Heading>
           </Link>
-          <p className="text-sm text-gray-400">
+          <Text variant="bodySm" className="text-gray-400">
             {config?.slogan || "Productos profesionales de calidad."}
-          </p>
+          </Text>
         </div>
 
         {/* Navigation */}
         <div className="flex flex-col items-center md:items-start gap-3">
-          <h4 className="font-semibold mb-3">Navegación</h4>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <Link href="/" className="text-gray-300 hover:text-white transition-colors">
-                Inicio
-              </Link>
-            </li>
-            <li>
-              <Link href="/products" className="text-gray-300 hover:text-white transition-colors">
-                Productos
-              </Link>
-            </li>
-            <li>
-              <Link href="/about" className="text-gray-300 hover:text-white transition-colors">
-                Sobre Nosotros
-              </Link>
-            </li>
-            <li>
-              <Link href="/login" className="text-gray-300 hover:text-white transition-colors">
-                Mi Cuenta
-              </Link>
-            </li>
+          <Heading level={6} className="text-gray-400 mb-1">Navegación</Heading>
+          <ul className="space-y-2">
+            {[
+              { href: "/", label: "Inicio" },
+              { href: "/products", label: "Productos" },
+              { href: "/about", label: "Sobre Nosotros" },
+              { href: "/login", label: "Mi Cuenta" },
+            ].map(({ href, label }) => (
+              <li key={href}>
+                <Link href={href}>
+                  <Text variant="bodySm" className="text-gray-300 hover:text-white transition-colors">
+                    {label}
+                  </Text>
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
         {/* Contact */}
         <div className="flex flex-col items-center md:items-start gap-3">
-          <h4 className="font-semibold mb-3">Contacto</h4>
+          <Heading level={6} className="text-gray-400 mb-1">Contacto</Heading>
 
-          {/* Email corporativo */}
           {email && (
-            <a
-              href={`mailto:${email}`}
-              className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
-            >
+            <a href={`mailto:${email}`} className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
               <Mail size={16} />
-              <span>{email}</span>
+              <Text variant="bodySm" as="span" className="text-inherit">{email}</Text>
             </a>
           )}
 
-          {/* WhatsApp general */}
           {whatsapp && (
             <a
               href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}?text=Hola%2C%20tengo%20una%20consulta.`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-gray-300 hover:text-green-400 transition-colors"
+              className="flex items-center gap-2 text-gray-300 hover:text-green-400 transition-colors"
             >
               <MessageCircle size={16} />
-              <span>WhatsApp</span>
+              <Text variant="bodySm" as="span" className="text-inherit">WhatsApp</Text>
             </a>
           )}
 
-          {/* Sucursales */}
           {sucursales.length > 0 && (
             <div className="mt-4 space-y-4 w-full">
               {sucursales.map((suc) => (
                 <div key={suc.id} className="space-y-1.5">
-                  <p className="text-sm font-semibold text-white">{suc.nombre}</p>
+                  <Text variant="bodySmBold" className="text-white">{suc.nombre}</Text>
                   {suc.telefono && (
-                    <a
-                      href={`tel:${suc.telefono}`}
-                      className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
-                    >
+                    <a href={`tel:${suc.telefono}`} className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
                       <Phone size={14} />
-                      <span>{suc.telefono}</span>
+                      <Text variant="bodySm" as="span" className="text-inherit">{suc.telefono}</Text>
                     </a>
                   )}
                   {suc.direccion && (
-                    <p className="flex items-start gap-2 text-sm text-gray-400">
+                    <div className="flex items-start gap-2 text-gray-400">
                       <MapPin size={14} className="mt-0.5 shrink-0" />
-                      <span>{suc.direccion}</span>
-                    </p>
+                      <Text variant="bodySm" as="span" className="text-inherit">{suc.direccion}</Text>
+                    </div>
                   )}
                 </div>
               ))}
             </div>
           )}
 
-          {/* Fallback: teléfono general si no hay sucursales */}
           {sucursales.length === 0 && telefono && (
-            <a
-              href={`tel:${telefono}`}
-              className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
-            >
+            <a href={`tel:${telefono}`} className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
               <Phone size={16} />
-              <span>{telefono}</span>
+              <Text variant="bodySm" as="span" className="text-inherit">{telefono}</Text>
             </a>
           )}
 
-          {/* Redes sociales */}
           {instagram && (
             <a
               href={`https://instagram.com/${instagram}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-gray-300 hover:text-white transition-colors"
+              className="text-gray-300 hover:text-white transition-colors"
             >
-              @{instagram}
+              <Text variant="bodySm" as="span" className="text-inherit">@{instagram}</Text>
             </a>
           )}
         </div>
       </div>
 
-      <div className="border-t border-white/10 py-6 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} {nombreEmpresa} · Todos los derechos reservados
+      <div className="border-t border-white/10 py-6 text-center">
+        <Text variant="bodySm" className="text-gray-500">
+          © {new Date().getFullYear()} {nombreEmpresa} · Todos los derechos reservados
+        </Text>
       </div>
     </footer>
   );

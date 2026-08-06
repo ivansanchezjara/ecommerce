@@ -138,6 +138,30 @@ export async function getPerfil() {
   return apiFetch("/auth/perfil/");
 }
 
+/** Actualiza los datos editables del perfil del cliente. */
+export async function updatePerfil(datos) {
+  return apiFetch("/auth/perfil/", {
+    method: "PATCH",
+    body: JSON.stringify(datos),
+  });
+}
+
+/**
+ * Vincula un email o celular faltante a la cuenta (requiere OTP verificado).
+ * @param {string} identificador  Email o celular nuevo
+ * @param {number} tokenVerificacionId  ID del token verificado con proposito "vincular"
+ * @returns {Promise<object>} Perfil actualizado
+ */
+export async function vincularContacto(identificador, tokenVerificacionId) {
+  return apiFetch("/auth/vincular-contacto/", {
+    method: "POST",
+    body: JSON.stringify({
+      identificador,
+      token_verificacion_id: tokenVerificacionId,
+    }),
+  });
+}
+
 /** Verifica si hay sesión activa (client-side). */
 export function isAuthenticated() {
   if (typeof window === "undefined") return false;

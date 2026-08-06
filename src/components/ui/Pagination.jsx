@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Button from "./basics/Button";
 
 export function PaginationInfo({
   currentPage,
@@ -24,26 +25,30 @@ export function PaginationControls({ currentPage, totalPages, onPageChange }) {
 
   return (
     <div className="flex items-center justify-center gap-4 border-t border-gray-100 pt-8 pb-8">
-      <button
+      <Button
+        variant="ghost"
+        size="icon"
+        icon={ChevronLeft}
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-700 border border-transparent hover:border-gray-200"
-      >
-        <ChevronLeft size={24} />
-      </button>
+        aria-label="Página anterior"
+        className="rounded-full hover:border-gray-200 border border-transparent"
+      />
 
       <span className="text-sm font-medium text-gray-600">
         Página <span className="text-gray-900 font-bold">{currentPage}</span>{" "}
         de {totalPages}
       </span>
 
-      <button
+      <Button
+        variant="ghost"
+        size="icon"
+        icon={ChevronRight}
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-700 border border-transparent hover:border-gray-200"
-      >
-        <ChevronRight size={24} />
-      </button>
+        aria-label="Página siguiente"
+        className="rounded-full hover:border-gray-200 border border-transparent"
+      />
     </div>
   );
 }
