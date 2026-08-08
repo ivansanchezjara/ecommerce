@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { notFound } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { getProducto } from "@/services/tienda";
 import ProductDetailView from "@/components/products/ProductDetailView";
 import { LoadingScreen, EmptyState } from "@/components/ui";
+import { PackageX, WifiOff } from "lucide-react";
 
 export default function ProductPage() {
   const params = useParams();
@@ -18,41 +17,102 @@ export default function ProductPage() {
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(null); // { type: "not_found" | "network" }
+
+  const abortControllerRef = useRef(null);
 
   useEffect(() => {
+    if (!productSlug) return;
+
+    // Cancelar fetch anterior si el slug cambia rápido
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     async function fetchProduct() {
+      setLoading(true);
+      setError(null);
+      setProduct(null);
+
       try {
-        const data = await getProducto(productSlug);
+        const data = await getProducto(productSlug, controller.signal);
+
+        if (controller.signal.aborted) return;
+
         setProduct(data);
       } catch (err) {
+        if (err.name === "AbortError") return;
+
         console.error("Error cargando producto:", err);
-        setError(true);
+
+        if (err.status === 404) {
+          setError({ type: "not_found" });
+        } else {
+          setError({ type: "network" });
+        }
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     }
-    if (productSlug) fetchProduct();
+
+    fetchProduct();
+
+    return () => controller.abort();
   }, [productSlug]);
+
+  // Actualizar título del documento cuando se carga el producto
+  useEffect(() => {
+    if (product) {
+      document.title = `${product.nombre} | Tienda`;
+    }
+    return () => {
+      document.title = "Tienda";
+    };
+  }, [product]);
 
   if (loading) {
     return <LoadingScreen texto="Cargando producto..." />;
   }
 
-  if (error) {
+  if (error?.type === "not_found") {
     return (
       <EmptyState
-        icon="⚠️"
-        titulo="No pudimos cargar el producto"
-        descripcion="Ocurrió un error al obtener la información. Intentá de nuevo o volvé al catálogo."
+        icon={<PackageX size={40} strokeWidth={1.5} />}
+        titulo="Producto no encontrado"
+        descripcion="El producto que buscás no existe o fue eliminado del catálogo."
         textoBoton="Ver catálogo"
         onAction={() => router.push("/products")}
       />
     );
   }
 
+  if (error?.type === "network") {
+    return (
+      <EmptyState
+        icon={<WifiOff size={40} strokeWidth={1.5} />}
+        titulo="Error de conexión"
+        descripcion="No pudimos cargar el producto. Verificá tu conexión e intentá de nuevo."
+        textoBoton="Reintentar"
+        onAction={() => router.refresh()}
+      />
+    );
+  }
+
   if (!product) {
-    notFound();
+    return (
+      <EmptyState
+        icon={<PackageX size={40} strokeWidth={1.5} />}
+        titulo="Producto no encontrado"
+        descripcion="No se encontró información para este producto."
+        textoBoton="Ver catálogo"
+        onAction={() => router.push("/products")}
+      />
+    );
   }
 
   return <ProductDetailView product={product} />;

@@ -1,13 +1,14 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { getProductos, getCategorias, getMarcas } from "@/services/tienda";
 import { registrarBusqueda } from "@/services/cuenta";
 import { ProductCard } from "@/components/products/ProductsCard";
 import { PaginationInfo, PaginationControls } from "@/components/ui/Pagination";
 import ProductsFilters from "@/components/products/ProductsFilters";
-import { LoadingScreen, EmptyState, Heading, Text } from "@/components/ui";
+import { LoadingScreen, EmptyState, Heading, Text, useToast } from "@/components/ui";
 import { SearchX } from "lucide-react";
+import { useDebounce } from "@/hooks/useDebounce";
 import Link from "next/link";
 
 const ITEMS_PER_PAGE = 20;
@@ -15,6 +16,7 @@ const ITEMS_PER_PAGE = 20;
 export default function ProductsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { showToast } = useToast();
 
   const searchQuery = searchParams.get("q") || "";
   const categoriaParam = searchParams.get("categoria") || "";
@@ -27,6 +29,13 @@ export default function ProductsContent() {
   const [categorias, setCategorias] = useState([]);
   const [marcas, setMarcas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Debounce del query de búsqueda para el registro en historial
+  const debouncedSearchQuery = useDebounce(searchQuery, 600);
+
+  // Ref para cancelar fetches obsoletos (race condition)
+  const abortControllerRef = useRef(null);
 
   // Cargar filtros
   useEffect(() => {
@@ -44,8 +53,18 @@ export default function ProductsContent() {
 
   // Cargar productos cuando cambian los filtros
   useEffect(() => {
+    // Cancelar request anterior si aún está en vuelo
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     async function fetchProducts() {
       setLoading(true);
+      setError(null);
+
       try {
         const params = {};
         if (searchQuery) params.search = searchQuery;
@@ -55,23 +74,41 @@ export default function ProductsContent() {
         params.page = pageParam;
         params.page_size = ITEMS_PER_PAGE;
 
-        const data = await getProductos(params);
+        const data = await getProductos(params, controller.signal);
+
+        // Si fue abortado, no actualizar estado
+        if (controller.signal.aborted) return;
+
         setProducts(data.results || data);
         setTotalCount(data.count || (data.results || data).length);
-
-        // Registrar búsqueda en historial (server-side, silencioso)
-        if (searchQuery && searchQuery.trim().length >= 2) {
-          const count = data.count || (data.results || data).length;
-          registrarBusqueda(searchQuery.trim(), count).catch(() => {});
-        }
       } catch (err) {
+        if (err.name === "AbortError") return;
         console.error("Error cargando productos:", err);
+        setError("No se pudieron cargar los productos. Intentá de nuevo.");
         setProducts([]);
+        showToast("Error al cargar productos", "error");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     }
+
     fetchProducts();
+
+    return () => controller.abort();
+  }, [searchQuery, categoriaParam, brandParam, featuredParam, pageParam, showToast]);
+
+  // Registrar búsqueda con debounce (efecto separado)
+  useEffect(() => {
+    if (debouncedSearchQuery && debouncedSearchQuery.trim().length >= 2) {
+      registrarBusqueda(debouncedSearchQuery.trim(), totalCount).catch(() => {});
+    }
+  }, [debouncedSearchQuery, totalCount]);
+
+  // Scroll al tope cuando cambian filtros o página
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [searchQuery, categoriaParam, brandParam, featuredParam, pageParam]);
 
   // Helpers de navegación
@@ -93,33 +130,36 @@ export default function ProductsContent() {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", newPage.toString());
     router.replace(`/products?${params.toString()}`, { scroll: false });
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
-  // Filter groups para el componente de filtros
-  const filterGroups = [
-    {
-      title: "Categoría",
-      options: ["Todos", ...categorias.map((c) => c.nombre)],
-      active: categorias.find((c) => String(c.id) === categoriaParam)?.nombre || "Todos",
-      setActive: (val) => {
-        const cat = categorias.find((c) => c.nombre === val);
-        updateParams("categoria", cat ? String(cat.id) : "");
+  // Filter groups memoizados para evitar re-renders innecesarios
+  const filterGroups = useMemo(
+    () => [
+      {
+        title: "Categoría",
+        options: ["Todos", ...categorias.map((c) => c.nombre)],
+        active:
+          categorias.find((c) => String(c.id) === categoriaParam)?.nombre || "Todos",
+        setActive: (val) => {
+          const cat = categorias.find((c) => c.nombre === val);
+          updateParams("categoria", cat ? String(cat.id) : "");
+        },
       },
-    },
-    {
-      title: "Marca",
-      options: ["Todos", ...marcas],
-      active: brandParam || "Todos",
-      setActive: (val) => updateParams("brand", val === "Todos" ? "" : val),
-    },
-  ];
+      {
+        title: "Marca",
+        options: ["Todos", ...marcas],
+        active: brandParam || "Todos",
+        setActive: (val) => updateParams("brand", val === "Todos" ? "" : val),
+      },
+    ],
+    [categorias, marcas, categoriaParam, brandParam, updateParams]
+  );
 
-  const clearAllFilters = () => {
+  const clearAllFilters = useCallback(() => {
     router.replace("/products", { scroll: false });
-  };
+  }, [router]);
 
   return (
     <main className="max-w-7xl mx-auto py-6 lg:py-12 px-4">
@@ -157,6 +197,17 @@ export default function ProductsContent() {
         <div className="flex-1">
           {loading ? (
             <LoadingScreen texto="Cargando productos..." />
+          ) : error ? (
+            <EmptyState
+              icon={<SearchX size={40} strokeWidth={1.5} />}
+              titulo="Error al cargar"
+              descripcion={error}
+              textoBoton="Reintentar"
+              onAction={() => router.replace(
+                `/products?${searchParams.toString()}`,
+                { scroll: false }
+              )}
+            />
           ) : products.length > 0 ? (
             <>
               <PaginationInfo

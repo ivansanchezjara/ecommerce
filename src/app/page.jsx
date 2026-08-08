@@ -186,7 +186,7 @@ export default function Home() {
             <Percent size={12} className="mr-1" /> Beneficios Exclusivos
           </Badge>
           <Heading level={2} className="text-3xl md:text-4xl text-white">
-            ¿Sos odontólogo o tenés una clínica médica?
+            ¿Sos odontólogo o tenés una clínica dental?
           </Heading>
           <Text variant="body" className="text-slate-300 max-w-2xl mx-auto font-light leading-relaxed">
             Registrate e ingresá con tu cuenta para acceder a nuestra lista de precios preferenciales, promociones especiales por cantidad y cotizaciones en el día.

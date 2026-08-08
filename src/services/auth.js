@@ -85,7 +85,7 @@ export async function activarCuenta(identificador, password, tokenVerificacionId
 
 /**
  * Paso 3b: registra una cuenta nueva.
- * @param {{ identificador, password, razon_social, celular, tokenVerificacionId }} params
+ * @param {{ identificador, password, razon_social, celular, tipo_entidad, tokenVerificacionId }} params
  * @returns {Promise<{ access, refresh, cliente }>}
  */
 export async function registrarCliente({
@@ -93,6 +93,7 @@ export async function registrarCliente({
   password,
   razon_social,
   celular = "",
+  tipo_entidad = "",
   tokenVerificacionId,
 }) {
   const data = await apiFetch("/auth/registrar/", {
@@ -102,6 +103,7 @@ export async function registrarCliente({
       password,
       razon_social,
       celular,
+      tipo_entidad,
       token_verificacion_id: tokenVerificacionId,
     }),
   });

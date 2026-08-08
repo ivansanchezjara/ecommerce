@@ -1,9 +1,10 @@
 "use client";
 
-import { ShoppingCart, Check, ListFilter, Lock } from "lucide-react";
+import { ShoppingCart, Check, ListFilter, Lock, Heart } from "lucide-react";
 import { useCart } from "@/app/context/CartContext";
 import { useAuth } from "@/app/context/AuthContext";
 import { useTienda } from "@/app/context/TiendaContext";
+import { useWishlist } from "@/app/context/WishlistContext";
 import { useState } from "react";
 import { Badge, Button, Text } from "@/components/ui";
 
@@ -11,10 +12,12 @@ export function ProductCard({ product }) {
   const { addToCart } = useCart();
   const { isLoggedIn } = useAuth();
   const { formatearPrecio } = useTienda();
+  const { isInWishlist, toggle } = useWishlist();
   const [added, setAdded] = useState(false);
 
   const hasVariants = product.variantes_count > 1;
   const imageUrl = product.imagen_principal_url || "/placeholder-product.png";
+  const isFav = isLoggedIn && isInWishlist(product.id);
 
   const handleAdd = (e) => {
     if (hasVariants) return;
@@ -31,8 +34,33 @@ export function ProductCard({ product }) {
     setTimeout(() => setAdded(false), 1500);
   };
 
+  const handleToggleWishlist = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isLoggedIn) return;
+    toggle(product.id);
+  };
+
   return (
     <div className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:shadow-dental-blue/5 transition-all duration-300 flex flex-col h-full relative">
+      {/* Botón de favoritos */}
+      {isLoggedIn && (
+        <button
+          type="button"
+          onClick={handleToggleWishlist}
+          className="absolute top-2 right-2 z-20 p-1.5 rounded-full bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white hover:scale-110 transition-all duration-200"
+          title={isFav ? "Quitar de favoritos" : "Agregar a favoritos"}
+        >
+          <Heart
+            size={16}
+            className={`transition-colors duration-200 ${
+              isFav
+                ? "fill-red-500 text-red-500"
+                : "text-gray-400 hover:text-red-400"
+            }`}
+          />
+        </button>
+      )}
       {/* Imagen */}
       <div className="relative aspect-[4/3] overflow-hidden shrink-0 bg-dental-blue-light">
         {product.featured && (

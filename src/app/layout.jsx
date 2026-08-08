@@ -5,6 +5,7 @@ import SideCart from "@/components/cart/SideCart";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import { TiendaProvider } from "./context/TiendaContext";
+import { WishlistProvider } from "./context/WishlistContext";
 import { ToastProvider } from "@/components/ui/feedback/ToastContext";
 
 export const metadata = {
@@ -28,14 +29,16 @@ export default function RootLayout({ children }) {
       <body className="antialiased scroll-smooth" suppressHydrationWarning>
         <TiendaProvider>
           <AuthProvider>
-            <CartProvider>
-              <ToastProvider>
-                <SideCart />
-                <MainHeader />
-                <main className="min-h-screen">{children}</main>
-                <Footer />
-              </ToastProvider>
-            </CartProvider>
+            <WishlistProvider>
+              <CartProvider>
+                <ToastProvider>
+                  <SideCart />
+                  <MainHeader />
+                  <main className="min-h-screen">{children}</main>
+                  <Footer />
+                </ToastProvider>
+              </CartProvider>
+            </WishlistProvider>
           </AuthProvider>
         </TiendaProvider>
       </body>

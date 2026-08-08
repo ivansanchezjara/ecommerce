@@ -19,8 +19,10 @@ import {
   ChevronUp,
   ShoppingBag,
   ExternalLink,
+  MessageSquarePlus,
 } from "lucide-react";
 import { useTienda } from "@/app/context/TiendaContext";
+import CrearResenaModal from "@/components/products/CrearResenaModal";
 
 // ─── Constantes ──────────────────────────────────────────────────────────────
 
@@ -57,7 +59,7 @@ const ESTADO_CONFIG = {
 
 // ─── Tarjeta de pedido ───────────────────────────────────────────────────────
 
-function PedidoCard({ pedido }) {
+function PedidoCard({ pedido, onCrearResena }) {
   const [expanded, setExpanded] = useState(false);
   const { formatearPrecio } = useTienda();
   const config = ESTADO_CONFIG[pedido.estado] || ESTADO_CONFIG.confirmado;
@@ -218,6 +220,21 @@ function PedidoCard({ pedido }) {
               </Text>
             </div>
           )}
+
+          {/* Botón crear reseña para pedidos entregados */}
+          {pedido.estado === "entregado" && (
+            <div className="mt-4 pt-3 border-t border-slate-100">
+              <Button
+                onClick={() => onCrearResena(pedido)}
+                variant="outline"
+                size="sm"
+                icon={MessageSquarePlus}
+                className="border-slate-300 text-slate-600 hover:bg-slate-100"
+              >
+                Crear reseña
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -231,6 +248,7 @@ export default function SeccionPedidos() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("todos");
+  const [resenaModal, setResenaModal] = useState(null); // { pedido, linea }
 
   useEffect(() => {
     fetchPedidos();
@@ -248,6 +266,19 @@ export default function SeccionPedidos() {
       setLoading(false);
     }
   }
+
+  const handleCrearResena = (pedido) => {
+    // Tomar el primer producto del pedido para la reseña
+    // El usuario podría elegir cuál evaluar — por ahora usamos el primero
+    const linea = pedido.lineas[0];
+    if (!linea) return;
+    setResenaModal({
+      productoId: linea.producto_id,
+      productoNombre: linea.producto_nombre,
+      varianteId: linea.variante_id || null,
+      ventaId: pedido.id,
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -334,11 +365,24 @@ export default function SeccionPedidos() {
           /* Lista de pedidos */
           <div className="space-y-4">
             {pedidos.map((pedido) => (
-              <PedidoCard key={pedido.id} pedido={pedido} />
+              <PedidoCard key={pedido.id} pedido={pedido} onCrearResena={handleCrearResena} />
             ))}
           </div>
         )}
       </div>
+
+      {/* Modal de reseña */}
+      {resenaModal && (
+        <CrearResenaModal
+          isOpen={!!resenaModal}
+          onClose={() => setResenaModal(null)}
+          productoId={resenaModal.productoId}
+          productoNombre={resenaModal.productoNombre}
+          varianteId={resenaModal.varianteId}
+          ventaId={resenaModal.ventaId}
+          onSuccess={() => setResenaModal(null)}
+        />
+      )}
     </div>
   );
 }

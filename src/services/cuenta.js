@@ -327,3 +327,107 @@ export async function crearSolicitudAsistencia(data) {
     body: JSON.stringify(data),
   });
 }
+
+// ─── Relaciones Profesionales ───────────────────────────────────────
+
+/**
+ * Busca instituciones por nombre/abreviatura.
+ * @param {string} search
+ * @returns {Promise<Array<{ id, razon_social, abreviatura, tipo_institucion }>>}
+ */
+export async function buscarInstituciones(search) {
+  return apiFetch(`/instituciones/?search=${encodeURIComponent(search)}`);
+}
+
+/**
+ * Obtiene las ofertas académicas de una institución.
+ * @param {number} institucionId
+ * @returns {Promise<Array<{ id, nombre, tipo, duracion_anios }>>}
+ */
+export async function getOfertasAcademicas(institucionId) {
+  return apiFetch(`/instituciones/${institucionId}/ofertas/`);
+}
+
+/**
+ * Busca clínicas por nombre/razón social.
+ * @param {string} search
+ * @returns {Promise<Array<{ id, razon_social, nombre_comercial }>>}
+ */
+export async function buscarClinicas(search) {
+  return apiFetch(`/clinicas/?search=${encodeURIComponent(search)}`);
+}
+
+/**
+ * Agrega una formación académica.
+ * @param {{ institucion_id, oferta_academica_id?, tipo, anio_ingreso?, anio_egreso?, titulo_obtenido? }} data
+ * @returns {Promise<Object>}
+ */
+export async function crearFormacion(data) {
+  return apiFetch("/mis-formaciones/", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * Elimina una formación académica.
+ * @param {number} id
+ * @returns {Promise<void>}
+ */
+export async function eliminarFormacion(id) {
+  try {
+    await apiFetch(`/mis-formaciones/${id}/`, { method: "DELETE" });
+  } catch (err) {
+    if (err.status && err.status >= 400) throw err;
+  }
+}
+
+/**
+ * Agrega un vínculo laboral (dónde trabaja).
+ * @param {{ clinica_id, cargo?, especialidad? }} data
+ * @returns {Promise<Object>}
+ */
+export async function crearVinculoLaboral(data) {
+  return apiFetch("/mis-vinculos/", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * Elimina (desactiva) un vínculo laboral.
+ * @param {number} id
+ * @returns {Promise<void>}
+ */
+export async function eliminarVinculoLaboral(id) {
+  try {
+    await apiFetch(`/mis-vinculos/${id}/`, { method: "DELETE" });
+  } catch (err) {
+    if (err.status && err.status >= 400) throw err;
+  }
+}
+
+/**
+ * Agrega un vínculo docente (dónde enseña).
+ * @param {{ institucion_id, oferta_academica_id?, catedra?, tipo? }} data
+ * @returns {Promise<Object>}
+ */
+export async function crearVinculoDocente(data) {
+  return apiFetch("/mis-vinculos-docentes/", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * Elimina (desactiva) un vínculo docente.
+ * @param {number} id
+ * @returns {Promise<void>}
+ */
+export async function eliminarVinculoDocente(id) {
+  try {
+    await apiFetch(`/mis-vinculos-docentes/${id}/`, { method: "DELETE" });
+  } catch (err) {
+    if (err.status && err.status >= 400) throw err;
+  }
+}

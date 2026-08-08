@@ -7,6 +7,7 @@ export { default as Field } from './basics/Field';
 export { default as Toggle } from './basics/Toggle';
 export { default as PhoneInput, validatePhone, buildPhoneValue, PHONE_PREFIXES } from './basics/PhoneInput';
 export { default as MapaPicker } from './basics/MapaPicker';
+export { default as UbicacionPicker } from './basics/UbicacionPicker';
 export * from './basics/Typography';
 
 // Feedback
