@@ -88,7 +88,8 @@ export async function crearPreguntaProducto(slug, pregunta) {
 }
 
 /**
- * Obtiene las marcas disponibles.
+ * Obtiene las marcas disponibles con logo.
+ * @returns {Promise<Array<{id, nombre, slug, logo_url}>>}
  */
 export async function getMarcas() {
   return apiFetch("/productos/marcas/");
@@ -127,4 +128,16 @@ export async function getPreciosByVariantes(varianteIds, moneda = "USD") {
  */
 export async function getTipoCambio() {
   return apiFetch("/tipo-cambio/");
+}
+
+// ─── Banners ────────────────────────────────────────────────────────
+
+/**
+ * Obtiene banners vigentes de la tienda.
+ * @param {string} [ubicacion] - Filtrar por ubicación: hero, secundario, popup
+ * @returns {Promise<Array<{id, titulo, subtitulo, imagen_url, enlace, boton_texto, ubicacion}>>}
+ */
+export async function getBanners(ubicacion) {
+  const params = ubicacion ? `?ubicacion=${ubicacion}` : "";
+  return apiFetch(`/banners/${params}`);
 }

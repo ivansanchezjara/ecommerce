@@ -19,8 +19,9 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTienda } from "./context/TiendaContext";
-import { getProductos, getCategorias } from "@/services/tienda";
+import { getProductos, getCategorias, getMarcas, getBanners } from "@/services/tienda";
 import { ProductsCarousel, HeroSection, Badge, Button, Heading, Text } from "@/components/ui";
+import MarcasSection from "@/components/marcas/MarcasSection";
 
 // Helper para mapear ícono según nombre de categoría
 function getCategoryIcon(name) {
@@ -39,17 +40,23 @@ export default function Home() {
   const { config } = useTienda();
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [marcas, setMarcas] = useState([]);
+  const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [productsData, categoriesData] = await Promise.all([
+        const [productsData, categoriesData, marcasData, bannersData] = await Promise.all([
           getProductos({ featured: "true" }),
           getCategorias(),
+          getMarcas(),
+          getBanners("hero"),
         ]);
         setFeaturedProducts(productsData.results || productsData);
         setCategorias((categoriesData.results || categoriesData).slice(0, 6));
+        setMarcas(Array.isArray(marcasData) ? marcasData : marcasData.results || []);
+        setBanners(Array.isArray(bannersData) ? bannersData : bannersData.results || []);
       } catch (err) {
         console.error("Error cargando datos de inicio:", err);
       } finally {
@@ -64,9 +71,10 @@ export default function Home() {
   const logoUrl = config?.logo_url;
 
   return (
-    <div className="flex flex-col w-full bg-slate-50/30">
+    <div className="flex flex-col w-full">
       {/* SECCIÓN HERO */}
       <HeroSection
+        banners={banners}
         logoUrl={logoUrl}
         nombreEmpresa={nombreEmpresa}
         slogan={slogan}
@@ -129,6 +137,11 @@ export default function Home() {
           </div>
         </section>
       )}
+
+
+
+      {/* MARCAS CON LAS QUE TRABAJAMOS */}
+      {!loading && <MarcasSection marcas={marcas} />}
 
       {/* BARRA DE BENEFICIOS */}
       <section className="py-16 bg-white border-b border-gray-50">

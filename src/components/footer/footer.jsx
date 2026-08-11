@@ -16,7 +16,7 @@ export default function Footer() {
   const sucursales = config?.sucursales || [];
 
   return (
-    <footer className="w-full border-t bg-gray-900 text-white">
+    <footer className="w-full bg-gray-900 text-white">
       <div className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10 text-center md:text-left">
         {/* Brand */}
         <div className="flex flex-col items-center md:items-start gap-3">

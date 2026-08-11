@@ -43,7 +43,8 @@ export default function ProductsContent() {
       try {
         const [cats, brands] = await Promise.all([getCategorias(), getMarcas()]);
         setCategorias(cats.results || cats);
-        setMarcas(brands);
+        const marcasData = Array.isArray(brands) ? brands : brands.results || [];
+        setMarcas(marcasData.map((m) => typeof m === "string" ? m : m.nombre));
       } catch (err) {
         console.error("Error cargando filtros:", err);
       }

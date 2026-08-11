@@ -32,7 +32,7 @@ export default function MainHeader() {
   const logoUrl = config?.logo_url;
 
   return (
-    <header className="w-full sticky top-0 bg-white border-b border-gray-200 z-50 shadow-sm">
+    <header className="w-full sticky top-0 bg-white z-50 shadow-sm">
       {/* PISO 1: LOGO, ACCIONES — Fondo blanco */}
       <div className="border-b border-gray-100 bg-white">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 p-3.5 px-4">
