@@ -128,6 +128,28 @@ export async function login(identificador, password) {
   return data;
 }
 
+// ─── Restablecer contraseña ───────────────────────────────────────────────────
+
+/**
+ * Restablece la contraseña de un usuario usando un token OTP verificado.
+ * @param {string} identificador  Email o celular
+ * @param {string} password  Nueva contraseña
+ * @param {number} tokenVerificacionId
+ * @returns {Promise<{ access, refresh, cliente }>}
+ */
+export async function restablecerPassword(identificador, password, tokenVerificacionId) {
+  const data = await apiFetch("/auth/restablecer-password/", {
+    method: "POST",
+    body: JSON.stringify({
+      identificador,
+      password,
+      token_verificacion_id: tokenVerificacionId,
+    }),
+  });
+  _guardarSesion(data);
+  return data;
+}
+
 // ─── Sesión ──────────────────────────────────────────────────────────────────
 
 /** Logout del cliente. */

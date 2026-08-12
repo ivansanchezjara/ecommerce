@@ -46,9 +46,10 @@ export async function apiFetch(endpoint, options = {}) {
       }
       return retryResponse.json();
     } else {
-      // Limpiar sesión
+      // Limpiar sesión silenciosamente — no lanzar error "Sesión expirada"
+      // Los componentes que dependen de auth van a reaccionar al estado isLoggedIn=false
       clearSession();
-      throw new ApiError(401, { detail: "Sesión expirada" });
+      return null;
     }
   }
 

@@ -21,6 +21,7 @@ export default function StepEnviarCodigo({ identificador, proposito, razonSocial
   }, [cooldown]);
 
   const esActivar = proposito === "activar";
+  const esRestablecer = proposito === "restablecer";
   const canalLabel = canal === "email" ? "email" : "WhatsApp";
 
   async function enviar() {
@@ -52,11 +53,13 @@ export default function StepEnviarCodigo({ identificador, proposito, razonSocial
   return (
     <div className="space-y-5">
       <StepHeader
-        titulo={esActivar ? "Activar tu cuenta" : "Crear cuenta nueva"}
+        titulo={esRestablecer ? "Restablecer contraseña" : esActivar ? "Activar tu cuenta" : "Crear cuenta nueva"}
         subtitulo={
-          esActivar
-            ? `Hola ${razonSocial?.split(" ")[0] || ""}. Tu cuenta está lista, solo falta crear una contraseña.`
-            : "Te enviaremos un código para verificar tu identidad."
+          esRestablecer
+            ? "Te enviaremos un código para verificar tu identidad y crear una nueva contraseña."
+            : esActivar
+              ? `Hola ${razonSocial?.split(" ")[0] || ""}. Tu cuenta está lista, solo falta crear una contraseña.`
+              : "Te enviaremos un código para verificar tu identidad."
         }
         onBack={onBack}
         icon={Mail}

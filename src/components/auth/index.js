@@ -3,6 +3,7 @@ export { default as StepLogin } from "./StepLogin";
 export { default as StepEnviarCodigo } from "./StepEnviarCodigo";
 export { default as StepVerificarCodigo } from "./StepVerificarCodigo";
 export { default as StepCrearPassword } from "./StepCrearPassword";
+export { default as StepNuevaPassword } from "./StepNuevaPassword";
 export { default as StepRegistrar } from "./StepRegistrar";
 export { default as StepExito } from "./StepExito";
 export { default as StepHeader } from "./StepHeader";

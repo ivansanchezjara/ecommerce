@@ -43,11 +43,9 @@ function PreguntaItem({ pregunta }) {
             <Text variant="bodySm" className="text-gray-700">
               {pregunta.respuesta}
             </Text>
-            {pregunta.respondido_at && (
-              <Text variant="bodyXs" className="text-gray-400 mt-1">
-                Respondido el {formatFecha(pregunta.respondido_at)}
-              </Text>
-            )}
+            <Text variant="bodyXs" className="text-gray-400 mt-1">
+              Asesor de Ventas{pregunta.respondido_por ? ` (${pregunta.respondido_por})` : ""} {pregunta.respondido_at ? `· Respondido el ${formatFecha(pregunta.respondido_at)}` : ""}
+            </Text>
           </div>
         </div>
       ) : (

@@ -22,6 +22,14 @@ const CATEGORIAS = {
   cliente_casual: "Cliente Casual",
 };
 
+const TIER_LABELS = {
+  publico: "Público",
+  estudiante: "Estudiante",
+  reventa: "Reventa",
+  mayorista: "Mayorista",
+  intercompany: "Intercompany",
+};
+
 export default function ProfileCard({ cliente }) {
   const inicial = (cliente?.razon_social?.[0] || "?").toUpperCase();
   const tipoCuenta = cliente?.tipo_cuenta; // "persona" | "clinica" | "empresa"
@@ -51,15 +59,18 @@ export default function ProfileCard({ cliente }) {
             </Link>
           </div>
 
-          {/* Tipo de cuenta + categoría */}
+          {/* Tipo de cuenta + tier (sin redundancia) */}
           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
             <Badge className={`text-[10px] border-none ${tipoInfo.badgeColor}`}>
               <tipoInfo.icon size={10} className="mr-1" />
               {tipoInfo.label}
             </Badge>
-            <Badge variant="info" className="text-[10px] capitalize">
-              {cliente?.tier_precio || "Público"}
-            </Badge>
+            {/* Solo mostrar tier si aporta info diferente a la categoría */}
+            {cliente?.tier_precio && !esTierRedundante(cliente.categoria, cliente.tier_precio) && (
+              <Badge variant="info" className="text-[10px]">
+                {TIER_LABELS[cliente.tier_precio] || cliente.tier_precio}
+              </Badge>
+            )}
           </div>
         </div>
       </div>
@@ -162,4 +173,17 @@ function getTipoInfo(tipoCuenta, cliente) {
     default:
       return { label: "Cliente", icon: Stethoscope, badgeColor: "bg-slate-100 text-slate-600" };
   }
+}
+
+/**
+ * Determina si el tier de precio es redundante con la categoría mostrada.
+ * Ej: categoría "estudiante" + tier "estudiante" → redundante.
+ */
+function esTierRedundante(categoria, tierPrecio) {
+  if (!categoria || !tierPrecio) return false;
+  // Si la categoría y el tier son el mismo concepto, no mostrar ambos
+  if (categoria === tierPrecio) return true;
+  // "publico" es el default, no aporta info nueva
+  if (tierPrecio === "publico") return true;
+  return false;
 }

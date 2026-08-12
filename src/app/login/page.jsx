@@ -9,6 +9,7 @@ import {
   StepEnviarCodigo,
   StepVerificarCodigo,
   StepCrearPassword,
+  StepNuevaPassword,
   StepRegistrar,
   StepExito,
 } from "@/components/auth";
@@ -21,8 +22,14 @@ const PASOS = {
   ENVIAR_CODIGO: "enviar_codigo",
   VERIFICAR_CODIGO: "verificar_codigo",
   CREAR_PASSWORD: "crear_password",
+  NUEVA_PASSWORD: "nueva_password",
   REGISTRAR: "registrar",
   EXITO: "exito",
+  // Restablecer contraseña
+  RESTABLECER_ENVIAR: "restablecer_enviar",
+  RESTABLECER_VERIFICAR: "restablecer_verificar",
+  RESTABLECER_PASSWORD: "restablecer_password",
+  RESTABLECER_EXITO: "restablecer_exito",
 };
 
 export default function LoginPage() {
@@ -44,6 +51,13 @@ export default function LoginPage() {
     }
   }
 
+  function handleOlvidePassword() {
+    // Ir al flujo de restablecer con el identificador actual
+    irA(PASOS.RESTABLECER_ENVIAR, {
+      proposito: "restablecer",
+    });
+  }
+
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
@@ -54,13 +68,59 @@ export default function LoginPage() {
           )}
 
           {paso === PASOS.LOGIN && (
-            <StepLogin
+            <>
+              <StepLogin
+                identificador={datos.identificador}
+                razonSocial={datos.razonSocial}
+                onBack={() => setPaso(PASOS.IDENTIFICADOR)}
+                onSuccess={() => router.push("/")}
+              />
+              <div className="mt-4 text-center">
+                <button
+                  type="button"
+                  onClick={handleOlvidePassword}
+                  className="text-sm text-dental-blue hover:underline font-medium"
+                >
+                  ¿Olvidaste tu contraseña?
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* ─── Flujo de restablecer contraseña ─── */}
+
+          {paso === PASOS.RESTABLECER_ENVIAR && (
+            <StepEnviarCodigo
               identificador={datos.identificador}
+              proposito="restablecer"
               razonSocial={datos.razonSocial}
-              onBack={() => setPaso(PASOS.IDENTIFICADOR)}
+              canal={datos.canal}
+              onBack={() => irA(PASOS.LOGIN)}
+              onNext={(d) => irA(PASOS.RESTABLECER_VERIFICAR, d)}
+            />
+          )}
+
+          {paso === PASOS.RESTABLECER_VERIFICAR && (
+            <StepVerificarCodigo
+              identificador={datos.identificador}
+              proposito="restablecer"
+              canal={datos.canal}
+              razonSocial={datos.razonSocial}
+              onBack={() => irA(PASOS.RESTABLECER_ENVIAR)}
+              onNext={(d) => irA(PASOS.RESTABLECER_PASSWORD, d)}
+            />
+          )}
+
+          {paso === PASOS.RESTABLECER_PASSWORD && (
+            <StepNuevaPassword
+              identificador={datos.identificador}
+              tokenVerificacionId={datos.tokenVerificacionId}
+              onBack={() => irA(PASOS.RESTABLECER_VERIFICAR)}
               onSuccess={() => router.push("/")}
             />
           )}
+
+          {/* ─── Flujo normal de activación/registro ─── */}
 
           {paso === PASOS.ENVIAR_CODIGO && (
             <StepEnviarCodigo
