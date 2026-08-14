@@ -23,9 +23,12 @@ export default function MainHeader() {
   }, [pathname]);
 
   const navLinks = [
-    { name: "Estudiantes", href: "/products?tag=estudiantes", icon: Sparkles },
-    { name: "Ofertas", href: "/products?tag=ofertas", icon: Percent, badge: "Sale" },
-    { name: "Sobre Nosotros", href: "/about" },
+    { name: "Novedades", href: "/novedades", icon: Sparkles },
+    { name: "Estudiantes", href: "/estudiantes" },
+    { name: "Ofertas", href: "/ofertas", icon: Percent, badge: "Sale" },
+    { name: "Catálogos", href: "/catalogos" },
+    { name: "Eventos", href: "/eventos" },
+    { name: "Atención", href: "/atencion" },
   ];
 
   const nombreEmpresa = config?.nombre_fantasia || config?.nombre || "Tienda";

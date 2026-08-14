@@ -37,6 +37,13 @@ export default function Footer() {
             {[
               { href: "/", label: "Inicio" },
               { href: "/products", label: "Productos" },
+              { href: "/novedades", label: "Novedades" },
+              { href: "/ofertas", label: "Ofertas" },
+              { href: "/estudiantes", label: "Estudiantes" },
+              { href: "/catalogos", label: "Catálogos" },
+              { href: "/eventos", label: "Eventos" },
+              { href: "/atencion", label: "Atención al Cliente" },
+              { href: "/faq", label: "Preguntas Frecuentes" },
               { href: "/about", label: "Sobre Nosotros" },
               { href: "/login", label: "Mi Cuenta" },
             ].map(({ href, label }) => (

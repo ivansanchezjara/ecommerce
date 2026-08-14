@@ -141,3 +141,35 @@ export async function getBanners(ubicacion) {
   const params = ubicacion ? `?ubicacion=${ubicacion}` : "";
   return apiFetch(`/banners/${params}`);
 }
+
+// ─── Catálogos PDF ──────────────────────────────────────────────────
+
+/**
+ * Obtiene catálogos PDF activos disponibles para descarga.
+ * @param {string} [marca] - Filtrar por marca
+ * @returns {Promise<Array<{id, titulo, descripcion, marca, portada_url, archivo_url}>>}
+ */
+export async function getCatalogos(marca) {
+  const params = marca ? `?marca=${encodeURIComponent(marca)}` : "";
+  return apiFetch(`/catalogos/${params}`);
+}
+
+// ─── Eventos ────────────────────────────────────────────────────
+
+/**
+ * Obtiene eventos activos de la tienda.
+ * @returns {Promise<Array>}
+ */
+export async function getEventos() {
+  return apiFetch("/eventos/");
+}
+
+// ─── Asesores / Vendedores ──────────────────────────────────────
+
+/**
+ * Obtiene los asesores/vendedores disponibles para atención.
+ * @returns {Promise<Array<{id, nombre, email, avatar_url, whatsapp}>>}
+ */
+export async function getAsesores() {
+  return apiFetch("/asesores/");
+}
