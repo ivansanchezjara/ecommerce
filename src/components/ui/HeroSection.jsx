@@ -15,25 +15,52 @@ function BannerSlide({ banner }) {
 
   const tieneTexto = banner.titulo || banner.subtitulo || banner.boton_texto;
 
-  // Mapeo de posicion_texto a clases de Tailwind
-  const posicionClasses = {
-    'top-left': 'items-start justify-start pt-8',
-    'top-center': 'items-start justify-center pt-8 text-center',
-    'top-right': 'items-start justify-end pt-8 text-right',
-    'center-left': 'items-center justify-start',
-    'center': 'items-center justify-center text-center',
-    'center-right': 'items-center justify-end text-right',
-    'bottom-left': 'items-end justify-start pb-8',
-    'bottom-center': 'items-end justify-center pb-8 text-center',
-    'bottom-right': 'items-end justify-end pb-8 text-right',
+  // Posicionamiento: si tiene coordenadas custom, usar posición absoluta
+  const isCustom = banner.posicion_texto === "custom" || banner.texto_x != null;
+
+  // Fallback: mapeo de posicion_texto legacy a coordenadas aproximadas
+  const legacyToCoords = {
+    'top-left': { x: 5, y: 15, w: 40, align: 'left' },
+    'top-center': { x: 30, y: 15, w: 40, align: 'center' },
+    'top-right': { x: 55, y: 15, w: 40, align: 'right' },
+    'center-left': { x: 5, y: 50, w: 40, align: 'left' },
+    'center': { x: 30, y: 50, w: 40, align: 'center' },
+    'center-right': { x: 55, y: 50, w: 40, align: 'right' },
+    'bottom-left': { x: 5, y: 80, w: 40, align: 'left' },
+    'bottom-center': { x: 30, y: 80, w: 40, align: 'center' },
+    'bottom-right': { x: 55, y: 80, w: 40, align: 'right' },
   };
 
-  const posClass = posicionClasses[banner.posicion_texto] || posicionClasses['center-left'];
+  const coords = isCustom
+    ? {
+        x: banner.texto_x ?? 5,
+        y: banner.texto_y ?? 50,
+        w: banner.texto_ancho ?? 40,
+        align: banner.texto_alineacion || 'left',
+        fontSize: banner.font_size || 36,
+        // Mobile
+        mx: banner.mobile_texto_x ?? 5,
+        my: banner.mobile_texto_y ?? 50,
+        mw: banner.mobile_texto_ancho ?? 80,
+        mAlign: banner.mobile_texto_alineacion || 'center',
+        mFontSize: banner.mobile_font_size || 24,
+      }
+    : {
+        ...(legacyToCoords[banner.posicion_texto] || legacyToCoords['center-left']),
+        fontSize: 36,
+        mx: 5, my: 50, mw: 80, mAlign: 'center', mFontSize: 24,
+      };
+
+  const alignClass = coords.align === 'center' ? 'text-center' : coords.align === 'right' ? 'text-right' : 'text-left';
+  const mAlignClass = coords.mAlign === 'center' ? 'text-center' : coords.mAlign === 'right' ? 'text-right' : 'text-left';
+  const btnAlign = coords.align === 'center' ? 'justify-center' : coords.align === 'right' ? 'justify-end' : '';
+  const mBtnAlign = coords.mAlign === 'center' ? 'justify-center' : coords.mAlign === 'right' ? 'justify-end' : '';
 
   return (
     <Wrapper
       {...wrapperProps}
       className="relative block w-full overflow-hidden bg-white"
+      style={{ containerType: 'inline-size' }}
     >
       {/* Imagen desktop */}
       {banner.imagen_url && (
@@ -55,32 +82,89 @@ function BannerSlide({ banner }) {
         />
       )}
 
-      {/* Texto posicionado */}
+      {/* Texto posicionado con coordenadas — Desktop */}
       {tieneTexto && (
-        <div className={`absolute inset-0 flex flex-col ${posClass} px-6 md:px-10`}>
-          <div className="max-w-lg space-y-3">
+        <div
+          className={`absolute hidden md:block ${alignClass}`}
+          style={{
+            left: `${coords.x}%`,
+            top: `${coords.y}%`,
+            width: `${coords.w}%`,
+            transform: 'translateY(-50%)',
+          }}
+        >
+          <div className="bg-black/40 backdrop-blur-sm rounded-2xl" style={{ padding: `${coords.fontSize / 19.2 * 0.8}cqw ${coords.fontSize / 19.2 * 1.2}cqw` }}>
             {banner.titulo && (
-              <Heading level={1} className="text-2xl md:text-5xl text-white drop-shadow-lg">
+              <Heading
+                level={1}
+                className="text-white drop-shadow-lg"
+                style={{ fontSize: `${coords.fontSize / 19.2}cqw` }}
+              >
                 {banner.titulo}
               </Heading>
             )}
             {banner.subtitulo && (
-              <Text className="text-sm md:text-lg text-white/90 font-light leading-relaxed drop-shadow">
+              <Text
+                className="text-white/90 font-light leading-relaxed drop-shadow mt-2"
+                style={{ fontSize: `${(coords.fontSize * 0.45) / 19.2}cqw` }}
+              >
                 {banner.subtitulo}
               </Text>
             )}
             {banner.boton_texto && banner.enlace && (
-              <Button
-                as={Link}
-                href={banner.enlace}
-                variant="secondary"
-                size="md"
-                icon={ArrowRight}
-                iconPosition="right"
-                className="rounded-full bg-white text-gray-900 hover:bg-gray-100 border-none shadow-lg mt-1"
+              <div className={`flex mt-3 ${btnAlign}`}>
+                <span
+                  className="inline-flex items-center gap-2 rounded-full bg-white text-gray-900 shadow-lg font-medium"
+                  style={{ fontSize: `${(coords.fontSize * 0.4) / 19.2}cqw`, padding: `${coords.fontSize / 19.2 * 0.4}cqw ${coords.fontSize / 19.2 * 1}cqw` }}
+                >
+                  {banner.boton_texto}
+                  <ArrowRight size={16} />
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Texto posicionado con coordenadas — Mobile */}
+      {tieneTexto && (
+        <div
+          className={`absolute md:hidden ${mAlignClass}`}
+          style={{
+            left: `${coords.mx}%`,
+            top: `${coords.my}%`,
+            width: `${coords.mw}%`,
+            transform: 'translateY(-50%)',
+          }}
+        >
+          <div className="bg-black/40 backdrop-blur-sm rounded-xl" style={{ padding: `${coords.mFontSize / 10.8 * 0.6}cqw ${coords.mFontSize / 10.8 * 1}cqw` }}>
+            {banner.titulo && (
+              <Heading
+                level={1}
+                className="text-white drop-shadow-lg"
+                style={{ fontSize: `${coords.mFontSize / 10.8}cqw` }}
               >
-                {banner.boton_texto}
-              </Button>
+                {banner.titulo}
+              </Heading>
+            )}
+            {banner.subtitulo && (
+              <Text
+                className="text-white/90 font-light leading-relaxed drop-shadow mt-1"
+                style={{ fontSize: `${(coords.mFontSize * 0.45) / 10.8}cqw` }}
+              >
+                {banner.subtitulo}
+              </Text>
+            )}
+            {banner.boton_texto && banner.enlace && (
+              <div className={`flex mt-2 ${mBtnAlign}`}>
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white text-gray-900 shadow-lg font-medium"
+                  style={{ fontSize: `${(coords.mFontSize * 0.4) / 10.8}cqw`, padding: `${coords.mFontSize / 10.8 * 0.4}cqw ${coords.mFontSize / 10.8 * 0.8}cqw` }}
+                >
+                  {banner.boton_texto}
+                  <ArrowRight size={14} />
+                </span>
+              </div>
             )}
           </div>
         </div>
@@ -89,17 +173,12 @@ function BannerSlide({ banner }) {
       {/* Botón CTA flotante si no hay texto pero sí enlace */}
       {!tieneTexto && banner.enlace && (
         <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-10">
-          <Button
-            as={Link}
-            href={banner.enlace}
-            variant="secondary"
-            size="md"
-            icon={ArrowRight}
-            iconPosition="right"
-            className="rounded-full bg-white/95 text-gray-900 hover:bg-white border-none shadow-xl backdrop-blur-sm"
+          <span
+            className="inline-flex items-center gap-2 rounded-full bg-white/95 text-gray-900 shadow-xl backdrop-blur-sm px-5 py-2.5 text-sm font-medium"
           >
             Ver más
-          </Button>
+            <ArrowRight size={16} />
+          </span>
         </div>
       )}
     </Wrapper>
