@@ -55,6 +55,18 @@ export async function apiFetch(endpoint, options = {}) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
+
+    // Si la cuenta está bloqueada por mora, forzar logout y redirigir
+    if (response.status === 403 && errorData.codigo === 'cuenta_bloqueada_mora') {
+      clearSession();
+      if (typeof window !== 'undefined') {
+        // Guardar mensaje para mostrar en la página de bloqueo
+        sessionStorage.setItem('cuenta_bloqueada_mensaje', errorData.detail || '');
+        window.location.href = '/cuenta-suspendida';
+      }
+      return null;
+    }
+
     throw new ApiError(response.status, errorData);
   }
 

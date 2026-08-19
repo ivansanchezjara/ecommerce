@@ -46,6 +46,7 @@ export default function Home() {
       {/* SECCIÓN HERO */}
       <HeroSection
         banners={banners}
+        loading={loading}
         logoUrl={logoUrl}
         nombreEmpresa={nombreEmpresa}
         slogan={slogan}

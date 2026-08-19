@@ -988,6 +988,8 @@ function extraerErrores(err) {
 
 // Labels legibles para nombres de campo del backend
 const LABELS_CAMPO = {
+  razon_social: "Nombre completo",
+  ruc: "RUC",
   cedula: "Cédula",
   fecha_nacimiento: "Fecha de nacimiento",
   tratamiento: "Tratamiento",
@@ -1042,6 +1044,7 @@ export default function DatosPage() {
   useEffect(() => {
     if (datosCliente) {
       setForm({
+        razon_social: datosCliente.razon_social || "",
         departamento: datosCliente.departamento || "",
         ciudad: datosCliente.ciudad || "",
         direccion: datosCliente.direccion || "",
@@ -1049,6 +1052,7 @@ export default function DatosPage() {
         longitud: datosCliente.longitud || null,
         tratamiento: datosCliente.tratamiento || "",
         cedula: datosCliente.cedula || "",
+        ruc: datosCliente.ruc || "",
         fecha_nacimiento: datosCliente.fecha_nacimiento || "",
         categoria: datosCliente.categoria || "",
         es_extranjero: datosCliente.es_extranjero || false,
@@ -1230,26 +1234,50 @@ export default function DatosPage() {
         {esPersona && (
           <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
             <Heading level={4} className="text-lg mb-6">Datos Personales</Heading>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <SelectField label="Tratamiento" value={form.tratamiento} onChange={(v) => handleChange("tratamiento", v)} options={TRATAMIENTOS} icon={User} />
-              <SelectField label="Categoría profesional" value={form.categoria} onChange={(v) => handleChange("categoria", v)} options={CATEGORIAS} icon={Stethoscope} />
-              <div>
-                <Input label="Cédula de Identidad" value={form.cedula} onChange={(e) => handleChange("cedula", e.target.value)} placeholder="Ej: 4.567.890" icon={FileText} />
-                <FieldError error={fieldErrors.cedula} />
+            <div className="space-y-5">
+              {/* Nombre completo con tratamiento */}
+              <div className="flex gap-3 items-start">
+                <div className="w-36 shrink-0">
+                  <SelectField label="Tratamiento" value={form.tratamiento} onChange={(v) => handleChange("tratamiento", v)} options={TRATAMIENTOS} icon={User} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <Input label="Nombre completo" value={form.razon_social} onChange={(e) => handleChange("razon_social", e.target.value)} placeholder="Nombre y apellido" icon={User} />
+                  <FieldError error={fieldErrors.razon_social} />
+                </div>
               </div>
-              <div>
-                <Input label="Fecha de Nacimiento" type="date" value={form.fecha_nacimiento} onChange={(e) => handleChange("fecha_nacimiento", e.target.value)} icon={Calendar} />
-                <FieldError error={fieldErrors.fecha_nacimiento} />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <SelectField label="Categoría profesional" value={form.categoria} onChange={(v) => handleChange("categoria", v)} options={CATEGORIAS} icon={Stethoscope} />
+                <div>
+                  <Input label="Fecha de Nacimiento" type="date" value={form.fecha_nacimiento} onChange={(e) => handleChange("fecha_nacimiento", e.target.value)} icon={Calendar} />
+                  <FieldError error={fieldErrors.fecha_nacimiento} />
+                </div>
               </div>
-              <div className="md:col-span-2 space-y-4">
+
+              {/* Soy extranjero — primero el toggle */}
+              <div className="space-y-4">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input type="checkbox" checked={form.es_extranjero} onChange={(e) => handleChange("es_extranjero", e.target.checked)} className="w-4 h-4 rounded border-slate-300 text-dental-blue focus:ring-dental-blue" />
                   <div className="flex items-center gap-2"><Globe size={16} className="text-slate-400" /><span className="text-sm font-medium text-slate-600">Soy extranjero/a</span></div>
                 </label>
-                {form.es_extranjero && (
+
+                {/* Documentos según nacionalidad */}
+                {!form.es_extranjero ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Input label="RUC" value={form.ruc} onChange={(e) => handleChange("ruc", e.target.value)} placeholder="Ej: 80000000-0" icon={FileText} />
+                      <FieldError error={fieldErrors.ruc} />
+                    </div>
+                    <div>
+                      <Input label="Cédula de Identidad" value={form.cedula} onChange={(e) => handleChange("cedula", e.target.value)} placeholder="Ej: 4.567.890" icon={FileText} />
+                      <FieldError error={fieldErrors.cedula} />
+                    </div>
+                  </div>
+                ) : (
                   <div>
                     <Input label="Documento extranjero" value={form.documento_extranjero} onChange={(e) => handleChange("documento_extranjero", e.target.value)} placeholder="Pasaporte o CI extranjera" icon={Globe} />
                     <FieldError error={fieldErrors.documento_extranjero} />
+                    <p className="mt-1.5 text-xs text-amber-600">Los clientes extranjeros no requieren RUC ni cédula paraguaya.</p>
                   </div>
                 )}
               </div>

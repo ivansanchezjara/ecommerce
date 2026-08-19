@@ -327,14 +327,30 @@ function StaticHero({ logoUrl, nombreEmpresa, slogan }) {
   );
 }
 
+// ─── Skeleton de carga ──────────────────────────────────────────
+
+function HeroSkeleton() {
+  return (
+    <section className="relative w-full bg-gray-100 animate-pulse">
+      {/* Aspect ratio similar al banner para evitar layout shift */}
+      <div className="w-full aspect-[21/9] md:aspect-[21/7]" />
+    </section>
+  );
+}
+
 // ─── Componente principal ───────────────────────────────────────
 
 /**
  * HeroSection dinámico.
+ * - Si `loading` es true → muestra skeleton
  * - Si recibe `banners` con items → muestra carousel
  * - Si no → muestra hero estático con logo/slogan
  */
-export default function HeroSection({ banners = [], logoUrl, nombreEmpresa, slogan }) {
+export default function HeroSection({ banners = [], loading = false, logoUrl, nombreEmpresa, slogan }) {
+  if (loading) {
+    return <HeroSkeleton />;
+  }
+
   const heroBanners = banners.filter((b) => b.imagen_url);
 
   if (heroBanners.length > 0) {
